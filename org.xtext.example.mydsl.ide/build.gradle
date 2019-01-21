@@ -11,7 +11,7 @@ dependencies {
 
 // Add a start script for the socket case
 // mainClassName = 'org.xtext.example.mydsl.ide.RunServer'
-mainClassName = 'org.xtext.example.mydsl.websockets.RunWebSocketServer'
+mainClassName = 'org.xtext.example.mydsl.websockets.RunWebSocketServer3'
 startScripts {
  	applicationName = 'mydsl-socket'
 }

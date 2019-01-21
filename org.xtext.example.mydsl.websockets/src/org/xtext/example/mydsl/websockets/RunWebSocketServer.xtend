@@ -24,7 +24,7 @@ import org.eclipse.xtext.util.internal.Log
 		var Injector injector = Guice.createInjector(new ServerModule())
 		var ServerSocket serverSocket = new ServerSocket(4389)
 		var WebSocketServerSocket webSocketServerSocket = new WebSocketServerSocket(serverSocket)
-		LOG.info('''Language Server started.''')
+		LOG.info('''!!!---!!! Language Server started.''')
 		try {
 			while (true) {
 				LOG.info('''Waiting for client to connect to web socket on port «serverSocket.localPort» ...''')

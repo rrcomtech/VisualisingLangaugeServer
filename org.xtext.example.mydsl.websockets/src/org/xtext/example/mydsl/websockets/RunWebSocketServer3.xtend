@@ -20,8 +20,9 @@ import org.eclipse.xtext.ide.server.ServerModule
 import org.java_websocket.WebSocket
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
+import org.eclipse.xtext.util.internal.Log
 
-class RunWebSocketServer3 {
+@Log class RunWebSocketServer3 {
 	
 	def static void main(String[] args) {
 		
@@ -56,10 +57,10 @@ class RunWebSocketServer3 {
 				.create();
 		languageServer.connect(launcher.getRemoteProxy())
 		var Future<?> future = launcher.startListening()
-		println("gogogo")
+		LOG.info('''Language Server is about to be started.''')
 
 		server.run();
-		System.err.println("möööp")
+		LOG.info('''Language Server started.''')
 		while (!future.isDone()) {
 							if (future.isDone()) {
 								languageServer.shutdown()
