@@ -3,11 +3,11 @@
  */
 package org.xtext.example.mydsl.generator
 
-import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.resource.Resource 
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import org.xtext.example.mydsl.myDsl.Greeting
+//import org.xtext.example.mydsl.myDsl.Greeting
 
 /**
  * Generates code from your model files on save.
@@ -17,17 +17,17 @@ import org.xtext.example.mydsl.myDsl.Greeting
 class MyDslGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-        val fileName = resource.URI.trimFileExtension.lastSegment
-        fsa.generateFile(fileName+"Greeter.java", '''
-        public class «fileName»Greeter {
-            
-            public static void main(String[] args) {
-                «FOR g : resource.allContents.filter(Greeting).toIterable»
-                    System.out.println("Hello «g.name» «IF g.from !== null» from «g.from.name»«ENDIF»!");
-                «ENDFOR»
-            }
-            
-        }
-        ''')
+//        val fileName = resource.URI.trimFileExtension.lastSegment
+//        fsa.generateFile(fileName+"Greeter.java", '''
+//        public class «fileName»Greeter {
+//            
+//            public static void main(String[] args) {
+//                «FOR g : resource.allContents.filter(Greeting).toIterable»
+//                    System.out.println("Hello «g.name» «IF g.from !== null» from «g.from.name»«ENDIF»!");
+//                «ENDFOR»
+//            }
+//            
+//        }
+//        ''')
 	}
 }
