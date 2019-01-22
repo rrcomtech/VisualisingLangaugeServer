@@ -1,9 +1,47 @@
 grammar org.xtext.example.mydsl.MyDsl with org.eclipse.xtext.common.Terminals
 
-generate myDsl "http://www.xtext.org/example/mydsl/MyDsl"
+generate markdownDecisionRecords "http://www.xtext.org/example/mydsl/MyDsl"
 
 Model:
-	greetings+=Greeting*;
+	DecisionRecord;
 	
-Greeting:
-	'Hello' name=ID ('from' from=[Greeting])? '!';
+DecisionRecord:
+	Header
+	Alternatives
+	Outcome;
+
+Header:
+	'# 'Title 
+	UserStory
+	Summary;
+
+Alternatives:
+	'# Considered Alternatives'
+	Alternative
+	(Alternative)+;
+	
+Alternative:
+	'* ' STRING;
+
+Outcome:
+	'# Decision Outcome'
+	Chosen_Alternative
+	Further_Rationale; 
+
+Title:
+	STRING;
+
+UserStory:
+	'**UserStory:**' TicketNumber;
+
+TicketNumber:
+	STRING;	
+	
+Summary:
+	'Summary:' STRING;
+
+Chosen_Alternative:	
+	'* **Chosen Alternative:**' Alternative;
+	
+Further_Rationale:
+	'* **Rationale:**' STRING; 
