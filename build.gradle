@@ -22,7 +22,7 @@ node {
 }
 
 // Configuration for Xtext projects
-configure(subprojects.findAll { it.name.startsWith('org.xtext.example.mydsl') }) {
+configure(subprojects.findAll { it.name.startsWith('org.xtext.') }) {
 
 	ext.xtextVersion = '2.16.0'
 	repositories {
@@ -37,7 +37,7 @@ configure(subprojects.findAll { it.name.startsWith('org.xtext.example.mydsl') })
 	apply from: "${rootDir}/gradle/source-layout.gradle"
 	apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	apply plugin: 'eclipse'
-	apply plugin: 'idea'
+//	apply plugin: 'idea'
 	
 	group = 'org.xtext.example.mydsl'
 	version = '1.0.0-SNAPSHOT'
@@ -50,7 +50,8 @@ configure(subprojects.findAll { it.name.startsWith('org.xtext.example.mydsl') })
 	}
 
 }
-	
+
+/*	
 task npmInstallVsce(type: NpmTask, dependsOn: npmSetup) {
 	ext.destPath = "$rootProject.projectDir/node_modules/vsce" 
 	outputs.dir(destPath)
@@ -133,6 +134,9 @@ task updateVersions {
 	}
 }
 
+*/
+
+
 release {
     tagTemplate = 'v${version}'
 	preTagCommitMessage = '[release] pre tag commit: '
@@ -140,8 +144,8 @@ release {
     newVersionCommitMessage = '[release] new version commit: '
     failOnSnapshotDependencies = false
 }
-updateVersions.shouldRunAfter tasks.getByName('confirmReleaseVersion')
-tasks.getByName('commitNewVersion').dependsOn updateVersions
+//updateVersions.shouldRunAfter tasks.getByName('confirmReleaseVersion')
+//tasks.getByName('commitNewVersion').dependsOn updateVersions
 
 // Workaround for issue https://github.com/researchgate/gradle-release/issues/144
 task build {
