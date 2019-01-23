@@ -15,6 +15,7 @@ class MyDslIdeContentProposalProvider extends IdeContentProposalProvider {
 //
 //	@Inject IScopeProvider scopeProvider
 
+
 	override protected _createProposals(RuleCall ruleCall, ContentAssistContext context,
 		IIdeContentProposalAcceptor acceptor) {
 //		if (greetingRule == ruleCall.rule && context.currentModel !== null) {

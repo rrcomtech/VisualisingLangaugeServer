@@ -10,39 +10,33 @@ DecisionRecord:
 	title=Title
 	userStory=UserStory
 	summary=Summary
-	considered_alteratives=Alternatives
+	consideredAlteratives=Alternatives
 	outcome=Outcome;
 
-Summary hidden(WS):
-	'Summary:' summary=STRING;
+Title:
+	name=STRING;
 
 UserStory:
-	'**User' 'story:**' ticket=ID;
+	'User' 'story:' ticket=ID;
 
-//Ticket:
-//	name=ID;
-
-Title hidden(WS):
-	'#' name=STRING;
+Summary:
+	'Summary:' summary=STRING;
 
 Alternatives:
-	'##' 'Considered' 'Alternatives:'
-	first_alternative=Alternative
-	furtherAlternatives+=(Alternative)+;
+	'Considered' 'alternatives:' alternatives+=(Alternative)+;
 
-Alternative hidden(WS):
-	'*' name=STRING;
+Alternative:
+	name=STRING;
 
 Outcome:
-	'##' 'Decision' 'Outcome:'
-	result=Chosen_Alternative
+	'Decision' 'outcome:' result='Chosen' 'alternative:' chosenAlternative=[Alternative|STRING]
 	rationale=Rationale;
 
-Chosen_Alternative:
-	'*' '**Chosen' 'Alternative:**' chosenAlternative=[Alternative];
+//Chosen_Alternative:
+//	'*' '**Chosen' 'Alternative:**' chosenAlternative=[Alternative];
 
-Rationale hidden(WS):
-	'*' '**Rationale:**' name=STRING;
+Rationale:
+	'Rationale:' name=STRING;
 
 //terminal L_O_NG_STRING returns ecore::EString: //custom terminal SurveyString
 //	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '?' | '!' | '@' | '#' | '%' | '^' | '&' | '(' | ')' | '0'..'9' |
