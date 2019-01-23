@@ -14,10 +14,10 @@ DecisionRecord:
 	outcome=Outcome;
 
 Title:
-	name=STRING;
+	'Title:' name=STRING;
 
 UserStory:
-	'User' 'story:' ticket=ID;
+	'User' 'story:' ticket=STRING;
 
 Summary:
 	'Summary:' summary=STRING;
@@ -29,16 +29,20 @@ Alternative:
 	name=STRING;
 
 Outcome:
-	'Decision' 'outcome:' result='Chosen' 'alternative:' chosenAlternative=[Alternative|STRING]
-	rationale=Rationale;
+	'We' 'chose' 'alternative:'
+	selected=ChosenAlternative
+	because=Because rationale=Rationale;
 
-//Chosen_Alternative:
-//	'*' '**Chosen' 'Alternative:**' chosenAlternative=[Alternative];
+Because:
+	name='because:'
+;
+
+ChosenAlternative:
+	selection=[Alternative|STRING];
 
 Rationale:
-	'Rationale:' name=STRING;
+	name=STRING;
 
-//terminal L_O_NG_STRING returns ecore::EString: //custom terminal SurveyString
-//	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '?' | '!' | '@' | '#' | '%' | '^' | '&' | '(' | ')' | '0'..'9' |
-//	' ')*;
+	//terminal L_O_NG_STRING returns ecore::EString: //custom terminal SurveyString
+	//	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '?' | '!' | '@' | '#' | '%' | '^' | '&' | '(' | ')' | '0'..'9' | ' ')*;
 	 
