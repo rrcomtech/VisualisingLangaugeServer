@@ -5,8 +5,8 @@ package org.xtext.example.mydsl.formatting2
 
 import org.eclipse.xtext.formatting2.AbstractFormatter2 
 import org.eclipse.xtext.formatting2.IFormattableDocument
-import org.xtext.example.mydsl.myDsl.Model
-import org.xtext.example.mydsl.myDsl.DecisionRecord
+// import org.xtext.example.mydsl.myDsl.Model
+// import org.xtext.example.mydsl.myDsl.DecisionRecord
 
 class MyDslFormatter extends AbstractFormatter2 {
 	
