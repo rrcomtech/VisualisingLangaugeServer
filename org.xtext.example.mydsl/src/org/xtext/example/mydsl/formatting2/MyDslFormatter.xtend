@@ -13,16 +13,16 @@ class MyDslFormatter extends AbstractFormatter2 {
 //	override format(Object obj, IFormattableDocument document) {
 //		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 //	}
-
-	def dispatch void format(Model model, extension IFormattableDocument document) {
-		model.prepend[newLines = 2]
-		for (DecisionRecord record : model.records) {
-			if (record.consideredAlteratives === null) {
-				model.regionFor.keyword("Considered").prepend[newLine] 
-				interior(model.regionFor.keyword("Considered").previousSemanticRegion, model.regionFor.keyword("alternatives"))[indent]
-			} 
-		}
-	}
+//
+//	def dispatch void format(Model model, extension IFormattableDocument document) {
+//		model.prepend[newLines = 2]
+//		for (DecisionRecord record : model.records) {
+//			if (record.consideredAlteratives === null) {
+//				model.regionFor.keyword("Considered").prepend[newLine] 
+//				interior(model.regionFor.keyword("Considered").previousSemanticRegion, model.regionFor.keyword("alternatives"))[indent]
+//			} 
+//		}
+//	}
 
 
 }
