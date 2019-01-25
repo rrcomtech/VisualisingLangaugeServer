@@ -20,16 +20,16 @@ class MyDslValidator extends AbstractMyDslValidator {
 	
 	public static val INVALID_NAME = 'invalidName'
 
-//	@Check
-//	def checkNumberOfAlternatives(DecisionRecord record) {
-//		
-//		if (record.consideredAlteratives.alternatives.size < 2) {
-//			warning('There should be two alternatives to choose from at least!',
-//				MyDslPackage.Literals.DECISION_RECORD__CONSIDERED_ALTERATIVES,
-//				INVALID_NAME
-//			)
-//		}
-//	}
+	@Check
+	def checkNumberOfAlternatives(DecisionRecord record) {
+		
+		if (record.consideredAlteratives.alternatives.size < 2) {
+			warning('There should be two alternatives to choose from at least!',
+				MyDslPackage.Literals.DECISION_RECORD__CONSIDERED_ALTERATIVES,
+				INVALID_NAME
+			)
+		}
+	}
 	
 	@Check
 	def checkTitleStartsWithCaptial(Title title) {
