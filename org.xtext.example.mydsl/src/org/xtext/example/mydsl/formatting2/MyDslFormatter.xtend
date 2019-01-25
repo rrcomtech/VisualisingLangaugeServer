@@ -10,7 +10,7 @@ import org.xtext.example.mydsl.myDsl.DecisionRecord
 
 class MyDslFormatter extends AbstractFormatter2 {
 	
-//	override format(Object obj, IFormattableDocument document) {
+	override format(Object obj, IFormattableDocument document) {
 //		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 //	}
 //
@@ -22,7 +22,7 @@ class MyDslFormatter extends AbstractFormatter2 {
 //				interior(model.regionFor.keyword("Considered").previousSemanticRegion, model.regionFor.keyword("alternatives"))[indent]
 //			} 
 //		}
-//	}
+	}
 
 
 }
