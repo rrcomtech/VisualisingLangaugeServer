@@ -9,15 +9,18 @@ if [[ $# -eq 3 ]]; then
 
 	if [[ $3 == "kill" ]]; then
 		if [[ `screen -ls | grep -e LSP-$LSP_NAME-$PORT` ]]; then 
-			screen -ls | grep -e LSP-$LSP_NAME-$PORT | cut -d. -f1 | awk '{print $1}' | xargs kill;
+			screen -ls | grep -e LSP-*-$PORT | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+			screen -wipe
 		fi
 	elif [[ $3 == "killAll-FromLanguage" ]]; then
 		if [[ `screen -ls | grep -e LSP-$LSP_NAME-` ]]; then 
-			screen -ls | grep -e LSP-$LSP_NAME- | cut -d. -f1 | awk '{print $1}' | xargs kill;
+			screen -ls | grep -e LSP-$LSP_NAME- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+			screen -wipe
 		fi
 	elif [[ $3 == "killAll" ]]; then
 		if [[ `screen -ls | grep -e LSP-` ]]; then 
-			screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill;
+			screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+			screen -wipe
 		fi
 	fi
 # otherwise start LSP accordingly
@@ -33,7 +36,9 @@ else
 	# ) 200>/tmp/LSP_CONTROLLER.lockfile 
 
 	# create a copy of the necessary files
-	flock . -c "cd .. && mkdir xtext-lsp-$LSP_NAME-$PORT && cd - && cp -r * ../xtext-lsp-$LSP_NAME-$PORT && mv ../xtext-lsp-$LSP_NAME-$PORT ."
+	flock . -c "cd .. && mkdir xtext-lsp-$LSP_NAME-$PORT && cd - && cp -r * ../xtext-lsp-$LSP_NAME-$PORT"
+
+	mv ../xtext-lsp-$LSP_NAME-$PORT .
 
 	# change dir into xtext project 
 	cd xtext-lsp-$LSP_NAME-$PORT
