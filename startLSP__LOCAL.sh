@@ -22,14 +22,21 @@ if [[ $# -eq 3 ]]; then
 	fi
 # otherwise start LSP accordingly
 else
-	# unzip xtext lsp git project 
+	# unzip xtext lsp git project if not already done. 
+	# obtain exclusive lock for extracting
+	# ( 
+	# 	flock -e 200
+	# 	if [ ! -d "xtext-lsp" ]; then
+	# 		unzip xtext-lsp-git-project.zip -d xtext-lsp
+	# 	fi
 
-	# if [ ! -d "xtext-lsp" ]; then
-	# 	unzip xtext-lsp-git-project.zip -d xtext-lsp
-	# fi
+	# ) 200>/tmp/LSP_CONTROLLER.lockfile 
 
-	# # change dir into xtext project 
-	# cd xtext-lsp
+	# create a copy of the necessary files
+	flock . -c "cd .. && mkdir xtext-lsp-$LSP_NAME-$PORT && cd - && cp -r * ../xtext-lsp-$LSP_NAME-$PORT && mv ../xtext-lsp-$LSP_NAME-$PORT ."
+
+	# change dir into xtext project 
+	cd xtext-lsp-$LSP_NAME-$PORT
 
 	# checkout LSP configuration to be started --- not used currently
 	git checkout $LSP_NAME
@@ -42,6 +49,11 @@ else
 
 	# start LSP in screen
 	screen -dmS LSP-$LSP_NAME-$PORT bash -c "./gradlew clean run"
+
+	# go back and clean up -- those screens won't be affected by killAll
+	cd ..
+	# 
+	screen -dmS LSP_CLEANUP_$PORT bash -c "bash cleanup-LSP.sh $1 $2"
 
 fi
 
