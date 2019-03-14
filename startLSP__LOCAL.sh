@@ -44,3 +44,21 @@ else
 	screen -dmS LSP-$LSP_NAME-$PORT bash -c "./gradlew clean run"
 
 fi
+
+# EXAMPLES
+
+### start an LSP on port "4400" with language "grammar_MDR" 
+
+# bash startLSP.sh 4400 grammar_MDR 
+
+### kill all LSP instances
+
+# bash startLSP.sh X X killAll 
+
+### kill all LSP instances running the "grammar_MDR" language
+
+# bash startLSP.sh X grammar_MDR killAll-FromLanguage 
+
+### kill all a specific LSP instance running the "grammar_MDR" on port 4400
+
+# bash startLSP.sh 4400 grammar_MDR killAll-FromLanguage 
