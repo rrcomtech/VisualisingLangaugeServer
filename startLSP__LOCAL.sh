@@ -9,16 +9,20 @@ if [[ $# -eq 3 ]]; then
 
 	if [[ $3 == "kill" ]]; then
 		if [[ `screen -ls | grep -e LSP-$LSP_NAME-$PORT` ]]; then 
-			screen -ls | grep -e LSP-$LSP_NAME-$PORT | cut -d. -f1 | awk '{print $1}' | xargs kill;
+			screen -ls | grep -e LSP-*-$PORT | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+			screen -wipe
 		fi
 	elif [[ $3 == "killAll-FromLanguage" ]]; then
 		if [[ `screen -ls | grep -e LSP-$LSP_NAME-` ]]; then 
-			screen -ls | grep -e LSP-$LSP_NAME- | cut -d. -f1 | awk '{print $1}' | xargs kill;
+			screen -ls | grep -e LSP-$LSP_NAME- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+			screen -wipe
 		fi
 	elif [[ $3 == "killAll" ]]; then
 		if [[ `screen -ls | grep -e LSP-` ]]; then 
-			screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill;
+			screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+			screen -wipe
 		fi
+		
 	fi
 # otherwise start LSP accordingly
 else
@@ -33,7 +37,14 @@ else
 	# ) 200>/tmp/LSP_CONTROLLER.lockfile 
 
 	# create a copy of the necessary files
-	flock . -c "cd .. && mkdir xtext-lsp-$LSP_NAME-$PORT && cd - && cp -r * ../xtext-lsp-$LSP_NAME-$PORT && mv ../xtext-lsp-$LSP_NAME-$PORT ."
+	cd .. 
+	mkdir xtext-lsp-$LSP_NAME-$PORT 
+	cd -
+	
+	# get an exclusive lock for copying the necessary files	
+	flock -e . -c "bash copyLSP-folder.sh $1 $2"
+
+	mv ../xtext-lsp-$LSP_NAME-$PORT .
 
 	# change dir into xtext project 
 	cd xtext-lsp-$LSP_NAME-$PORT
@@ -42,19 +53,20 @@ else
 	git checkout $LSP_NAME
 
 	# place PORT into xtext files
-	src=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.template;
-	destination=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.xtend;
+	# src=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.template;
+	# destination=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.xtend;
 
-	sed "s/<PORT>/$PORT/g" $src > $destination;
+	# sed "s/<PORT>/$PORT/g" $src > $destination;
+	echo $PORT > org.xtext.example.mydsl.ide/.lsp_portConfiguration
 
 	# start LSP in screen
 	screen -dmS LSP-$LSP_NAME-$PORT bash -c "./gradlew clean run"
 
 	# go back and clean up -- those screens won't be affected by killAll
-	cd ..
-	# 
-	screen -dmS LSP_CLEANUP_$PORT bash -c "bash cleanup-LSP.sh $1 $2"
-
+    cd ..
+    # 
+    screen -dmS LSP_CLEANUP_$PORT bash -c "bash cleanup-LSP.sh $1 $2"
+    
 fi
 
 # EXAMPLES

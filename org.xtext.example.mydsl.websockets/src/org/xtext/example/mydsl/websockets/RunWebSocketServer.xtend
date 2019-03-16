@@ -21,13 +21,20 @@ import org.java_websocket.WebSocket
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import org.eclipse.xtext.util.internal.Log
+import com.google.common.io.Files
+import com.google.common.base.Charsets
+import java.io.File
 
 @Log class RunWebSocketServer {
 	
 	def static void main(String[] args) {
-		
+
+		var String portFromFile = Files.toString(new File(".lsp_portConfiguration"), Charsets.UTF_8)
+		// remove any but the first line and read the port
+		portFromFile = portFromFile.split("\n").get(0)
+		var int port = Integer.valueOf(portFromFile)
 		var String host = "localhost";
-		var int port = 4389;
+
 		var Injector injector = Guice.createInjector(new ServerModule())
 		var MyDslWebSocketServer server = new MyDslWebSocketServer(new InetSocketAddress(host, port)) {
 			
@@ -57,10 +64,8 @@ import org.eclipse.xtext.util.internal.Log
 				.create();
 		languageServer.connect(launcher.getRemoteProxy())
 		var Future<?> future = launcher.startListening()
-		LOG.info('''Language Server is about to be started.''')
-
+		LOG.info('''Language Server is about to be started on: ''' + host + ''':''' + port)
 		server.run();
-		LOG.info('''Language Server started.''')
 		while (!future.isDone()) {
 							if (future.isDone()) {
 								languageServer.shutdown()
