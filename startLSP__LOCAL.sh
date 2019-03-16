@@ -18,10 +18,11 @@ if [[ $# -eq 3 ]]; then
 			screen -wipe
 		fi
 	elif [[ $3 == "killAll" ]]; then
-		if [[ `screen -ls | grep -e LSP-` ]]; then 
-			screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+		if [[ `screen -ls | grep -e LSP` ]]; then 
+			screen -ls | grep -e LSP | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
 			screen -wipe
 		fi
+		
 	fi
 # otherwise start LSP accordingly
 else
@@ -47,10 +48,11 @@ else
 	git checkout $LSP_NAME
 
 	# place PORT into xtext files
-	src=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.template;
-	destination=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.xtend;
+	# src=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.template;
+	# destination=./org.xtext.example.mydsl.websockets/src/org/xtext/example/mydsl/websockets/RunWebSocketServer.xtend;
 
-	sed "s/<PORT>/$PORT/g" $src > $destination;
+	# sed "s/<PORT>/$PORT/g" $src > $destination;
+	echo $PORT > org.xtext.example.mydsl.ide/.lsp_portConfiguration
 
 	# start LSP in screen
 	screen -dmS LSP-$LSP_NAME-$PORT bash -c "./gradlew clean run"
