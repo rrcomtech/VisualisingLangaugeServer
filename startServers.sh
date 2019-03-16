@@ -3,7 +3,7 @@
 count=$1
 initialPort=$2
 
-for ((currCount=1; currCount < $count; currCount++)) {
+for ((currCount=1; currCount <= $count; currCount++)) {
 
 	if [ $# -eq 2 ]; then
 		let port=$currCount+$initialPort;
