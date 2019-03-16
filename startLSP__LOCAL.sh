@@ -18,8 +18,8 @@ if [[ $# -eq 3 ]]; then
 			screen -wipe
 		fi
 	elif [[ $3 == "killAll" ]]; then
-		if [[ `screen -ls | grep -e LSP` ]]; then 
-			screen -ls | grep -e LSP | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+		if [[ `screen -ls | grep -e LSP-` ]]; then 
+			screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
 			screen -wipe
 		fi
 		
@@ -62,6 +62,11 @@ else
 	# start LSP in screen
 	screen -dmS LSP-$LSP_NAME-$PORT bash -c "./gradlew clean run"
 
+	# go back and clean up -- those screens won't be affected by killAll
+    cd ..
+    # 
+    screen -dmS LSP_CLEANUP_$PORT bash -c "bash cleanup-LSP.sh $1 $2"
+    
 fi
 
 # EXAMPLES
