@@ -37,7 +37,12 @@ else
 	# ) 200>/tmp/LSP_CONTROLLER.lockfile 
 
 	# create a copy of the necessary files
-	flock . -c "cd .. && mkdir xtext-lsp-$LSP_NAME-$PORT && cd - && cp -r * ../xtext-lsp-$LSP_NAME-$PORT"
+	cd .. 
+	mkdir xtext-lsp-$LSP_NAME-$PORT 
+	cd -
+	
+	# get an exclusive lock for copying the necessary files	
+	flock -e . -c "bash copyLSP-folder.sh $1 $2"
 
 	mv ../xtext-lsp-$LSP_NAME-$PORT .
 
@@ -56,11 +61,6 @@ else
 
 	# start LSP in screen
 	screen -dmS LSP-$LSP_NAME-$PORT bash -c "./gradlew clean run"
-
-	# go back and clean up -- those screens won't be affected by killAll
-	cd ..
-	# 
-	screen -dmS LSP_CLEANUP_$PORT bash -c "bash cleanup-LSP.sh $1 $2"
 
 fi
 
