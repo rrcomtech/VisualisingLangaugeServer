@@ -3,7 +3,7 @@
 PORT=$1 
 LSP_NAME=$2
 
-while [[ ! `lsof -t -i:$PORT` ]]
+while [[ `screen -ls | grep -e LSP-$LSP_NAME-$PORT` ]] && [[ ! `lsof -t -i:$PORT` ]]
 do 
 	sleep 1
 done
