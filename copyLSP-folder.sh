@@ -9,3 +9,4 @@ cp -r $LANGUAGE_NAME $LANGUAGE_NAME-$PORT
 
 #cp -r `ls -A | grep -v xtext-lsp` xtext-lsp-$LSP_NAME-$PORT
 
+
