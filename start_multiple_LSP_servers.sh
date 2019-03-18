@@ -1,15 +1,17 @@
 #!/bin/bash
 
-count=$1
-initialPort=$2
+COUNT=$1
+INITIAL_PORT=$2
+CURRENT_LANG=`git branch | grep \* | cut -d ' ' -f2`
 
-for ((currCount=1; currCount <= $count; currCount++)) {
+
+for ((currCOUNT=1; currCOUNT <= $COUNT; currCOUNT++)) {
 
 	if [ $# -eq 2 ]; then
-		let port=$currCount+$initialPort;
+		let port=$currCOUNT+$INITIAL_PORT;
 	else
-		let port=$currCount+4000;
+		let port=$currCOUNT+4000;
 	fi
 	#echo $port
-	bash -x manage_LSP_instance.sh start grammar_MDR $port
+	bash -x manage_LSP_instance.sh start $CURRENT_LANG $port
 }
