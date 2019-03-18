@@ -60,7 +60,7 @@ elif [[ $1 == "start" ]]; then
 	#mkdir xtext-lsp-$LANGUAGE_NAME-$PORT 
 	
 	# get an exclusive lock for copying the necessary files	
-	flock -e $LANGUAGE_NAME -c "bash copyLSP-folder.sh $LANGUAGE_NAME $PORT"
+	flock -e $LSP_BUILDS/LANGUAGE_NAME -c "bash copyLSP-folder.sh $LANGUAGE_NAME $PORT"
 
 	# change into build dir of the language 
 	# cd $LSP_BUILDS/$LANGUAGE_NAME-$PORT
