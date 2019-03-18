@@ -1,14 +1,18 @@
 #!/bin/bash
 
-PORT=$1 
-LSP_NAME=$2
+LSP_NAME=$1
+PORT=$2 
 
 while [[ `screen -ls | grep -e LSP-$LSP_NAME-$PORT` ]] && [[ ! `lsof -t -i:$PORT` ]]
 do 
 	sleep 1
 done
 
-rm -rf xtext-lsp-$LSP_NAME-$PORT
+if [ -d "LSP_BUILDS/$LSP_NAME-$PORT" ]; then
+
+	rm -rf LSP_BUILDS/$LSP_NAME-$PORT
+
+fi
 
 # wait until LSP is finished
 
@@ -19,8 +23,8 @@ done
 
 # if the LSP has been killed, there folder should be restored with files -> delete it
 
-if [ -d "xtext-lsp-$LSP_NAME-$PORT" ]; then
+if [ -d "LSP_BUILDS/$LSP_NAME-$PORT" ]; then
 
-	rm -rf xtext-lsp-$LSP_NAME-$PORT
+	rm -rf LSP_BUILDS/$LSP_NAME-$PORT
 
 fi

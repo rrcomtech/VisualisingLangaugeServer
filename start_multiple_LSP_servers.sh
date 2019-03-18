@@ -11,5 +11,5 @@ for ((currCount=1; currCount <= $count; currCount++)) {
 		let port=$currCount+4000;
 	fi
 	#echo $port
-	bash -x startLSP__LOCAL.sh $port grammar_MDR
+	bash -x manage_LSP_instance.sh start grammar_MDR $port
 }
