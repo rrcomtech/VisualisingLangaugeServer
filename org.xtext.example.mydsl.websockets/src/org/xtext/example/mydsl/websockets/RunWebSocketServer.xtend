@@ -28,11 +28,18 @@ import java.io.File
 @Log class RunWebSocketServer {
 	
 	def static void main(String[] args) {
-
-		var String portFromFile = Files.toString(new File(".lsp_portConfiguration"), Charsets.UTF_8)
-		// remove any but the first line and read the port
-		portFromFile = portFromFile.split("\n").get(0)
-		var int port = Integer.valueOf(portFromFile)
+		
+		var String lspLaunchPort;
+		
+		if (args.size >= 1) {
+			lspLaunchPort = args.get(0);
+		} else {
+			// remove any but the first line and read the port	
+			lspLaunchPort = Files.toString(new File(".lsp_portConfiguration"), Charsets.UTF_8)
+			lspLaunchPort = lspLaunchPort.split("\n").get(0)
+		}
+		
+		var int port = Integer.valueOf(lspLaunchPort)
 		var String host = "localhost";
 
 		var Injector injector = Guice.createInjector(new ServerModule())

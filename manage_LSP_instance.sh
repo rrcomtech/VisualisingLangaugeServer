@@ -60,13 +60,13 @@ elif [[ $1 == "start" ]]; then
 	#mkdir xtext-lsp-$LANGUAGE_NAME-$PORT 
 	
 	# get an exclusive lock for copying the necessary files	
-	flock -e LSP_BUILDS/$LANGUAGE_NAME -c "bash copyLSP-folder.sh $LANGUAGE_NAME $PORT"
+	#flock -e LSP_BUILDS/$LANGUAGE_NAME -c "bash copyLSP-folder.sh $LANGUAGE_NAME $PORT"
 
 	# change into build dir of the language 
 	# cd $LSP_BUILDS/$LANGUAGE_NAME-$PORT
 	# change to containing bin dir
-	cd `find . -type d -name "bin" | grep $LANGUAGE_NAME-$PORT`
-	echo $PORT > .lsp_portConfiguration
+	#cd `find . -type d -name "bin" | grep $LANGUAGE_NAME-$PORT`
+	#echo $PORT > .lsp_portConfiguration
 	
 	# # checkout LSP configuration to be started --- not used currently
 	# # git checkout $LANGUAGE_NAME
@@ -75,14 +75,15 @@ elif [[ $1 == "start" ]]; then
 	# # echo $PORT > org.xtext.example.mydsl.ide/.lsp_portConfiguration
 
 	# # start LSP in screen
-	screen -dmS LSP-$LANGUAGE_NAME-$PORT bash -c "./mydsl-socket"
+	cd `find . -type d -name "bin" | grep LSP_BUILDS/$LANGUAGE_NAME`
+	screen -dmS LSP-$LANGUAGE_NAME-$PORT bash -c "./mydsl-socket $PORT"
 
 	# # go back to root folder 
 	projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
 	# echo "changing back to $projectRoot"
 	cd $projectRoot
 	# start cleanup script, that will erase the folder specific to that lsp instance after it is finished / killed 
-	screen -dmS LSP_CLEANUP_$PORT bash -c "bash -x cleanup-LSP.sh $LANGUAGE_NAME $PORT"
+	#screen -dmS LSP_CLEANUP_$PORT bash -c "bash -x cleanup-LSP.sh $LANGUAGE_NAME $PORT"
     
 else
 	echo "Unknown command - please retry"
