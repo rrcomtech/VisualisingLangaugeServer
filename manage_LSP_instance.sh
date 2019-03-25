@@ -75,7 +75,7 @@ elif [[ $1 == "start" ]]; then
 	# # echo $PORT > org.xtext.example.mydsl.ide/.lsp_portConfiguration
 
 	# # start LSP in screen
-	cd LSP_BUILDS/$LANGUAGE_NAME
+	cd `find . -type d -name "bin" | grep LSP_BUILDS/$LANGUAGE_NAME`
 	screen -dmS LSP-$LANGUAGE_NAME-$PORT bash -c "./mydsl-socket $PORT"
 
 	# # go back to root folder 
