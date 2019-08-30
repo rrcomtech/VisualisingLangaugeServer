@@ -14,12 +14,12 @@ buildscript {
 
 
 apply plugin: 'net.researchgate.release'
-apply plugin: 'com.moowork.node'
-node {
-	version = '8.11.1'
-	npmVersion = '5.6.0'
-	download = true
-}
+// apply plugin: 'com.moowork.node'
+// node {
+// 	version = '8.11.1'
+// 	npmVersion = '5.6.0'
+// 	download = true
+// }
 
 // Configuration for Xtext projects
 configure(subprojects.findAll { it.name.startsWith('org.xtext.') }) {
@@ -40,7 +40,7 @@ configure(subprojects.findAll { it.name.startsWith('org.xtext.') }) {
 //	apply plugin: 'idea'
 	
 	group = 'org.xtext.example.mydsl'
-	version = '1.0.0-SNAPSHOT'
+	// version = '1.0.0-SNAPSHOT'
 	
 	sourceCompatibility = '1.8'
 	targetCompatibility = '1.8'
