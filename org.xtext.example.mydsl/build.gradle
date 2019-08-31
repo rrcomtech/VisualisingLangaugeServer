@@ -1,19 +1,7 @@
+
 dependencies {
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
-}
-
-apply plugin: 'maven-publish'
-
-publishing {
-	publications {
-		maven(MavenPublication) {
-			from components.java
-			groupId = 'de.btu.sst.swt.xtextLsp'
-			artifactId = 'grammar_MDR_simplified'
-			version = '1.0.0'
-		}
-	}
 }
 
 configurations {
