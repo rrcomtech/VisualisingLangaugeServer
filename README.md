@@ -29,7 +29,7 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 ### Scenario 2 -- install the language into the local Maven repository
 
 1. Set the language name in `settings.gradle` file with the help of the `rootProject.name` attribute. Do it, for instance, as follows:
-   - `rootProject.name = 'grammar_MDR_simplified'`
+   - `rootProject.name = '[PROJECT_NAME]'`, e.g., `rootProject.name = 'grammar_MDR_simplified'`
 2. Set the language version in `gradle.properties` file as follows:
    - `version = [VERSION]`, e.g., `version = 1.0.0-SNAPSHOT`
 3. Run `./gradlew install`.
