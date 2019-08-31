@@ -175,6 +175,8 @@ elif [[ $1 == "init" ]]; then
 	for currLang in $availableBranches; do 
 		performTask initialize $currLang
 	done
+
+	rm tmp.txt
 # otherwise
 else
 	echo "Unknown command - please retry"
