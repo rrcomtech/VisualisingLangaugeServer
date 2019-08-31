@@ -17,7 +17,7 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 
 1. Make sure that `java -version` is executable and pointing to a Java 8+ JDK.
 
-### Scenario 1 (build LSP binary )
+### Scenario 1 -- build and run the LSP binary
 
 1. Run `./gradlew distZip`.
 2. Go to zip file of the ide sub project (, e.g. `find . -name "*ide*zip"`)
@@ -26,7 +26,7 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 5. start it as follows:
 - `./mydsl-socket [PORT_THE_LSP_SHOULD_RUN_ON]`, e.g., `./mydsl-socket 38123`
 
-### Scenario 2 (install language into local Maven repository)
+### Scenario 2 -- install the language into the local Maven repository
 
 1. Set the language name in `settings.gradle` file with the help of the `rootProject.name` attribute. Do it, for instance, as follows:
 - `rootProject.name = 'grammar_MDR_simplified'`
@@ -34,6 +34,6 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 - `version = [VERSION]`, e.g., `version = 1.0.0-SNAPSHOT`
 3. Run `./gradlew install`.
 
-### Scenario 3 (client-only with separate server process)
+### Scenario 3 -- client-only with separate server process
 
 1. Run `./gradlew run` or launch RunServer from Eclipse.
