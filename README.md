@@ -24,7 +24,7 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 3. Inflate it
 4. Find the binary file `mydsl-socket`, and
 5. start it as follows:
-- `mydsl-socket [PORT_THE_LSP_SHOULD_RUN_ON]`
+- `./mydsl-socket [PORT_THE_LSP_SHOULD_RUN_ON]`, e.g., `./mydsl-socket 38123`
 
 ### Scenario 2 (install language into local Maven repository)
 
