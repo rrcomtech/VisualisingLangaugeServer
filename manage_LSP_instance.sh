@@ -69,7 +69,7 @@ build_LSP_binary() {
 installLanguageIntoLocalMavenRepo() {
 
 	# instal it
-	./gradlew clean install
+	./gradlew install
 	# clean up
 	#cd ~/.m2/repository/de/btu/sst/swt/xtextLsp/
 	# 
@@ -167,15 +167,14 @@ elif [[ $1 == "start" ]]; then
 # LSP wrapper binaries and install the language build into the local repository
 elif [[ $1 == "init" ]]; then
 
-	availableBranches=`git branch > tmp.txt`
+	git branch > tmp.txt
 	availableBranches=`cat tmp.txt | grep -v develop | grep -v master`
+	# remove asteriks of current branch
+	availableBranches=${availableBranches//"*"/" "}  
 
 	for currLang in $availableBranches; do 
 		performTask initialize $currLang
 	done
-
-#		performTask initialize $currLang
-
 # otherwise
 else
 	echo "Unknown command - please retry"
