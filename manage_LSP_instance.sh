@@ -21,7 +21,7 @@ performTask() {
 		
 		if [ $buildTask == "initialize" ]; then
 			build_LSP_binary $BUILD_DIR $languageName
-			installLanguageIntoLocalMavenRepo
+			concurrentInstallIntoLocalMavenRepo $languageName $BUILD_DIR
 
 		elif [ $buildTask == "install" ]; then
 
@@ -65,6 +65,22 @@ build_LSP_binary() {
 	fi
 }
 
+concurrentInstallIntoLocalMavenRepo() {
+
+	languageName=$1
+	BUILD_DIR=$2
+
+
+	screen -dmS concurrentInstall-$languageName bash -c "bash -x concurrentGradleInstall.sh $languageName $BUILD_DIR"			
+	# instal it
+	# mkdir ../___$languageName
+	# rsync -aP --exclude=$BUILD_DIR * ../___$languageName
+	# cd ../___$languageName
+	# ./gradlew install
+	# cd -
+	# rm -rf ../___$languageName
+	# 
+}
 
 installLanguageIntoLocalMavenRepo() {
 
