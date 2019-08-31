@@ -24,14 +24,14 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 3. Inflate it
 4. Find the binary file `mydsl-socket`, and
 5. start it as follows:
-- `./mydsl-socket [PORT_THE_LSP_SHOULD_RUN_ON]`, e.g., `./mydsl-socket 38123`
+  - `./mydsl-socket [PORT_THE_LSP_SHOULD_RUN_ON]`, e.g., `./mydsl-socket 38123`
 
 ### Scenario 2 -- install the language into the local Maven repository
 
 1. Set the language name in `settings.gradle` file with the help of the `rootProject.name` attribute. Do it, for instance, as follows:
-- `rootProject.name = 'grammar_MDR_simplified'`
+  - `rootProject.name = 'grammar_MDR_simplified'`
 2. Set the language version in `gradle.properties` file as follows:
-- `version = [VERSION]`, e.g., `version = 1.0.0-SNAPSHOT`
+  - `version = [VERSION]`, e.g., `version = 1.0.0-SNAPSHOT`
 3. Run `./gradlew install`.
 
 ### Scenario 3 -- client-only with separate server process
