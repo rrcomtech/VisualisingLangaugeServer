@@ -1,7 +1,8 @@
 #!/bin/bash
 command=$1
 languageName=$2
-commandParam=$3 
+commandParamOne=$3 
+commandParamTwo=$4
 
 ########################################################################
 ############################## FUNCTIONS ###############################
@@ -12,17 +13,18 @@ performTask() {
 	BUILD_DIR="LSP_BUILDS"
 	buildTask=$1
 	languageName=$2
+	version=$3
 
 	( 
 	flock -e 200
 	
 		# checkout LSP configuration to be started --- not used currently
-		git checkout $languageName
+		git checkout $languageName-$version
 		
 		if [ $buildTask == "initialize" ]; then
-			build_LSP_binary $BUILD_DIR $languageName
-			installLanguageIntoLocalMavenRepo
-			# concurrentInstallIntoLocalMavenRepo $languageName $BUILD_DIR
+			build_LSP_binary $BUILD_DIR $languageName $version
+			# installLanguageIntoLocalMavenRepo
+			concurrentInstallIntoLocalMavenRepo $BUILD_DIR $$languageName $version
 
 		elif [ $buildTask == "install" ]; then
 
@@ -39,16 +41,17 @@ performTask() {
 
 build_LSP_binary() {
 
+	BUILD_DIR=$1 
+	languageName=$2
+	version=$3
+
 	# check if LSP has been built in the mean time
-	if [ ! -d "$BUILD_DIR/$languageName" ]; then
+	if [ ! -d "$BUILD_DIR/$languageName-$version" ]; then
 
 		# create build directory if necessary
 		if [ ! -d "$BUILD_DIR" ]; then
 			mkdir $BUILD_DIR;
 		fi	
-
-		BUILD_DIR=$1
-		languageName=$2
 
 		# build it
 		./gradlew distZip
@@ -57,22 +60,22 @@ build_LSP_binary() {
 		# 
 		cd $BUILD_DIR
 		# extract it
-		unzip -o *.zip -d $languageName
+		unzip -o *.zip -d $languageName-$version
 		# clean up
 		rm *.zip
 		# leave
-		cd ..
+		cd -
 		#
 	fi
 }
 
 concurrentInstallIntoLocalMavenRepo() {
 
-	languageName=$1
-	BUILD_DIR=$2
+	BUILD_DIR=$1
+	languageName=$2
+	version=$3
 
-
-	screen -dmS concurrentInstall-$languageName bash -c "bash -x concurrentGradleInstall.sh $languageName $BUILD_DIR"			
+	screen -dmS concurrentInstall-$languageName bash -c "bash -x concurrentGradleInstall.sh $BUILD_DIR $languageName $version"			
 	# instal it
 	# mkdir ../___$languageName
 	# rsync -aP --exclude=$BUILD_DIR * ../___$languageName
@@ -123,11 +126,14 @@ if [[ $command == "init" ]]; then
 # otherwise start an LSP instance accordingly
 elif [[ $command == "start" ]]; then
 
-	performTask build $languageName
+	version=$commandParamOne
+	port=$commandParamTwo
+
+	performTask build $languageName $version
 
 	# start LSP in screen
-	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName`
-	screen -dmS LSP-$languageName-$commandParam bash -c "./mydsl-socket $commandParam"
+	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName-$version`
+	screen -dmS LSP-$languageName-$version-$port bash -c "./mydsl-socket $port"
 
 	# go back to root folder 
 	# projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
@@ -140,8 +146,11 @@ elif [[ $command == "start" ]]; then
 
 ## --- if kill is specified, kill a concrete instance
 elif [[ $command == "kill" ]]; then
-	if [[ `screen -ls | grep -e LSP-$languageName-$commandParam` ]]; then 
-		screen -ls | grep -e LSP-$languageName-$commandParam | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+
+	port=$commandParamOne
+
+	if [[ `screen -ls | grep -e LSP-$languageName -e $commandParamOne` ]]; then 
+		screen -ls | grep -e LSP-$languageName -e $commandParamOne | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
 		screen -wipe
 	fi
 ## --- if killAll is specified, kill all LSP instances
@@ -163,7 +172,10 @@ elif [[ $command == "killAll-FromLanguage" ]]; then
 #----------------------------------------------------------------------
 
 ## will create a copy of an LSP project in order to start with an git example project
-elif [[ $command == "createNewLSP" ]]; then
+elif [[ $command == "createNewLanguage" ]]; then
+
+	BUILD_DIR="LSP_BUILDS"
+	version=$commandParamOne
 
 	# briefly lock lock the folder
 	( 
@@ -171,7 +183,7 @@ elif [[ $command == "createNewLSP" ]]; then
 
 		git checkout templateLang		
 		# last slash is important, otherwise it will not be interpreted as a folder
-		git checkout-index -a -f --prefix=tmpLang-$languageName-$commandParam/
+		git checkout-index -a -f --prefix=tmpLang-$languageName-$version/
 
 	) 200>/tmp/$BUILD_DIR.lockfile 
 
@@ -181,7 +193,32 @@ elif [[ $command == "createNewLSP" ]]; then
 	echo $gradleConfig > settings.gradle
 	echo "rootProject.name = '$languageName'" > settings.gradle
 	# adapt version configuration
-	echo "version = $commandParam" > gradle.properties
+	echo "version = $version" > gradle.properties
+
+#----------------------------------------------------------------------
+#---------------------- BUILD NEW LSP PROJECT ------------------------
+#----------------------------------------------------------------------
+
+## will create a copy of an LSP project in order to start with an git example project
+elif [[ $command == "buildNewLSP" ]]; then
+
+	BUILD_DIR="LSP_BUILDS"
+	version=$commandParamOne
+
+	cd tmpLang-$languageName-$version
+
+	# validate status by buliding it
+	./gradlew compileJava
+
+	# the build did not work and thus we won't clean up the lang
+	if [ $? != 0 ]; then
+		exit 1
+	# the build worked, thus we want to clean up
+	else 
+		screen -dmS BUILD-$languageName-$version bash -c "bash buildLSPAndInstallLanguage.sh ../LSP_BUILDS $languageName $version"
+		exit 0
+	fi
+
 
 #----------------------------------------------------------------------
 #------------------------------- ELSE ---------------------------------

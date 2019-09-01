@@ -1,11 +1,12 @@
-languageName=$1
-BUILD_DIR=$2
+BUILD_DIR=$1
+languageName=$2
+version=$3
 
 # instal it
-mkdir ../___$languageName
-rsync -aP --exclude=$BUILD_DIR * ../___$languageName
-cd ../___$languageName
+mkdir ../___$languageName-$version
+rsync -aP --exclude=$BUILD_DIR * ../___$languageName-$version
+cd ../___$languageName-$version
 ./gradlew install
 cd -
-rm -rf ../___$languageName
+rm -rf ../___$languageName-$version
 # 
