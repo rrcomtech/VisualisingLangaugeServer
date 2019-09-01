@@ -106,7 +106,7 @@ installLanguageIntoLocalMavenRepo() {
 if [[ $command == "init" ]]; then
 
 	git branch > tmp.txt
-	availableBranches=`cat tmp.txt | grep -v develop | grep -v master`
+	availableBranches=`cat tmp.txt | grep -v develop | grep -v master | grep -v templateLang`
 	# remove asteriks of current branch
 	availableBranches=${availableBranches//"*"/" "}  
 
