@@ -1,7 +1,7 @@
 #!/bin/bash
-COMMAND_SUPPLEMENT=$1
-LANGUAGE_NAME=$2
-PORT=$3 
+command=$1
+languageName=$2
+commandParam=$3 
 
 ########################################################################
 ############################## FUNCTIONS ###############################
@@ -21,7 +21,8 @@ performTask() {
 		
 		if [ $buildTask == "initialize" ]; then
 			build_LSP_binary $BUILD_DIR $languageName
-			concurrentInstallIntoLocalMavenRepo $languageName $BUILD_DIR
+			installLanguageIntoLocalMavenRepo
+			# concurrentInstallIntoLocalMavenRepo $languageName $BUILD_DIR
 
 		elif [ $buildTask == "install" ]; then
 
@@ -95,93 +96,14 @@ installLanguageIntoLocalMavenRepo() {
 ################################ SCRIPT ################################
 ########################################################################
 
-## --- if kill is specified, kill a concrete instance
-if [[ $1 == "kill" ]]; then
-	if [[ `screen -ls | grep -e LSP-$LANGUAGE_NAME-$PORT` ]]; then 
-		screen -ls | grep -e LSP-$LANGUAGE_NAME-$PORT | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
-		screen -wipe
-	fi
-## --- if killAll is specified, kill all LSP instances
-elif [[ $1 == "killAll" ]]; then
-	if [[ `screen -ls | grep -e LSP-` ]]; then 
-		screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
-		screen -wipe
-	fi
-## --- if killAll-FromLanguage is specified, kill all LSP instances running that language
-elif [[ $1 == "killAll-FromLanguage" ]]; then
 
-	if [[ `screen -ls | grep -e LSP-$LANGUAGE_NAME-` ]]; then 
-		screen -ls | grep -e LSP-$LANGUAGE_NAME- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
-		screen -wipe
-	fi
-# otherwise start an LSP instance accordingly
-elif [[ $1 == "start" ]]; then
-
-	# # check if the requested LSP needs to be built first
-	# if [ ! -d "LSP_BUILDS/$LANGUAGE_NAME" ]; then
-	# 	# build the LSP code first
-	# 	( 
-	# 	flock -e 200
-	# 	# check if LSP has been built in the mean time
-	# 	if [ ! -d "LSP_BUILDS/$LANGUAGE_NAME" ]; then
-	# 		# create build directory if necessary
-	# 		if [ ! -d "LSP_BUILDS" ]; then
-	# 			mkdir LSP_BUILDS;
-	# 		fi
-	# 		# checkout LSP configuration to be started --- not used currently
-	# 		git checkout $LANGUAGE_NAME
-	# 		# build it
-	# 		./gradlew distZip
-	# 		# cp build to LSP_BUILDS folder
-	# 		cp `find . -name "*ide*zip"` LSP_BUILDS
-	# 		# 
-	# 		cd LSP_BUILDS
-	# 		# extract it
-	# 		unzip -o *.zip -d $LANGUAGE_NAME
-	# 		# clean up
-	# 		rm *.zip
-	# 		# leave
-	# 		cd ..
-	# 		#
-	# 	fi
-	# 	) 200>/tmp/LSP_BUILDER.lockfile 
-
-	# fi
-
-	performTask build $LANGUAGE_NAME
-
-	# create a copy of the necessary files
-	#mkdir xtext-lsp-$LANGUAGE_NAME-$PORT 
-	
-	# get an exclusive lock for copying the necessary files	
-	#flock -e LSP_BUILDS/$LANGUAGE_NAME -c "bash copyLSP-folder.sh $LANGUAGE_NAME $PORT"
-
-	# change into build dir of the language 
-	# cd $LSP_BUILDS/$LANGUAGE_NAME-$PORT
-	# change to containing bin dir
-	#cd `find . -type d -name "bin" | grep $LANGUAGE_NAME-$PORT`
-	#echo $PORT > .lsp_portConfiguration
-	
-	# # checkout LSP configuration to be started --- not used currently
-	# # git checkout $LANGUAGE_NAME
-
-	# # place PORT into config file
-	# # echo $PORT > org.xtext.example.mydsl.ide/.lsp_portConfiguration
-
-	# # start LSP in screen
-	cd `find . -type d -name "bin" | grep LSP_BUILDS/$LANGUAGE_NAME`
-	screen -dmS LSP-$LANGUAGE_NAME-$PORT bash -c "./mydsl-socket $PORT"
-
-	# # go back to root folder 
-	projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
-	# echo "changing back to $projectRoot"
-	cd $projectRoot
-	# start cleanup script, that will erase the folder specific to that lsp instance after it is finished / killed 
-	#screen -dmS LSP_CLEANUP_$PORT bash -c "bash -x cleanup-LSP.sh $LANGUAGE_NAME $PORT"
+#----------------------------------------------------------------------
+#------------------------------- INIT ---------------------------------
+#----------------------------------------------------------------------
     
 # for all available languages (equiv. to all branches but master and dev) build the 
 # LSP wrapper binaries and install the language build into the local repository
-elif [[ $1 == "init" ]]; then
+if [[ $command == "init" ]]; then
 
 	git branch > tmp.txt
 	availableBranches=`cat tmp.txt | grep -v develop | grep -v master`
@@ -193,6 +115,78 @@ elif [[ $1 == "init" ]]; then
 	done
 
 	rm tmp.txt
+
+#----------------------------------------------------------------------
+#------------------------------- START --------------------------------
+#----------------------------------------------------------------------
+
+# otherwise start an LSP instance accordingly
+elif [[ $command == "start" ]]; then
+
+	performTask build $languageName
+
+	# start LSP in screen
+	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName`
+	screen -dmS LSP-$languageName-$commandParam bash -c "./mydsl-socket $commandParam"
+
+	# go back to root folder 
+	# projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
+	# echo "changing back to $projectRoot"
+	# cd $projectRoot
+
+#----------------------------------------------------------------------
+#-------------------------------- KILL --------------------------------
+#----------------------------------------------------------------------
+
+## --- if kill is specified, kill a concrete instance
+elif [[ $command == "kill" ]]; then
+	if [[ `screen -ls | grep -e LSP-$languageName-$commandParam` ]]; then 
+		screen -ls | grep -e LSP-$languageName-$commandParam | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+		screen -wipe
+	fi
+## --- if killAll is specified, kill all LSP instances
+elif [[ $command == "killAll" ]]; then
+	if [[ `screen -ls | grep -e LSP-` ]]; then 
+		screen -ls | grep -e LSP- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+		screen -wipe
+	fi
+## --- if killAll-FromLanguage is specified, kill all LSP instances running that language
+elif [[ $command == "killAll-FromLanguage" ]]; then
+
+	if [[ `screen -ls | grep -e LSP-$languageName-` ]]; then 
+		screen -ls | grep -e LSP-$languageName- | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+		screen -wipe
+	fi
+
+#----------------------------------------------------------------------
+#---------------------- CREATE NEW LSP PROJECT ------------------------
+#----------------------------------------------------------------------
+
+## will create a copy of an LSP project in order to start with an git example project
+elif [[ $command == "createNewLSP" ]]; then
+
+	# briefly lock lock the folder
+	( 
+	flock -e 200
+
+		git checkout templateLang		
+		# last slash is important, otherwise it will not be interpreted as a folder
+		git checkout-index -a -f --prefix=tmpLang-$languageName-$commandParam/
+
+	) 200>/tmp/$BUILD_DIR.lockfile 
+
+	# fix build configuration
+	# adapt name configuration
+	gradleConfig=`cat settings.gradle | head -3`
+	echo $gradleConfig > settings.gradle
+	echo "rootProject.name = '$languageName'" > settings.gradle
+	# adapt version configuration
+	echo "version = $commandParam" > gradle.properties
+
+#----------------------------------------------------------------------
+#------------------------------- ELSE ---------------------------------
+#----------------------------------------------------------------------
+
 # otherwise
 else
 	echo "Unknown command - please retry"
