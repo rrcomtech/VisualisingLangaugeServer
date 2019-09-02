@@ -44,6 +44,7 @@ flock -e 200
 
 ) 200>/tmp/$BUILD_DIR.lockfile 
 
+# clean up
 rm -rf tmpLang-$languageName-$version 
 	
 

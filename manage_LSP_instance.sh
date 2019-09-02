@@ -15,52 +15,80 @@ performTask() {
 	languageName=$2
 	version=$3
 
-	( 
-	flock -e 200
 	
-		# checkout LSP configuration to be started --- not used currently
-		git checkout $languageName-$version
-		
+	
 		if [ $buildTask == "initialize" ]; then
-			build_LSP_binary $BUILD_DIR $languageName $version
+			# build_LSP_binary $BUILD_DIR $languageName $version
 			# installLanguageIntoLocalMavenRepo
-			concurrentInstallIntoLocalMavenRepo $BUILD_DIR $$languageName $version
+			buildLangServerAndInstallConcurrently $BUILD_DIR $$languageName $version
 
 		elif [ $buildTask == "install" ]; then
 
+			# create tempory build folder
+			createTemporaryFolderCopyForBuild $languageName $version
+			# enter it
+			cd tmpBuildLang-$languageName-$version/
+			# install it
 			installLanguageIntoLocalMavenRepo
+			# leave it
+			cd ..	
+			# clean it
+			rm -rf tmpBuildLang-$languageName-$version/
 
 		elif [ $buildTask == "build" ]; then
 
-			build_LSP_binary $BUILD_DIR $languageName
+			# create tempory build folder
+			createTemporaryFolderCopyForBuild $languageName $version
+			# enter it
+			cd tmpBuildLang-$languageName-$version/
+			# install it
+			buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
+			# leave it
+			cd ..	
+			# clean it
+			rm -rf tmpBuildLang-$languageName-$version/
 		fi
-
-	) 200>/tmp/$BUILD_DIR.lockfile 
 
 }
 
-build_LSP_binary() {
+buildLangServerBinaryFromSubfolder() {
 
-	BUILD_DIR=$1 
+	GENUINE_BUILD_DIR=$1
+	BUILD_DIR=../$GENUINE_BUILD_DIR
 	languageName=$2
 	version=$3
 
 	# check if LSP has been built in the mean time
 	if [ ! -d "$BUILD_DIR/$languageName-$version" ]; then
 
-		# create build directory if necessary
 		if [ ! -d "$BUILD_DIR" ]; then
-			mkdir $BUILD_DIR;
-		fi	
+		# syncronize folder creation, but only do if it's really neccessary
+			(
+			flock -e 200
+				# create build directory if necessary
+				if [ ! -d "$BUILD_DIR" ]; then
+					mkdir $BUILD_DIR;
+				fi	
+			) 200>/tmp/$GENUINE_BUILD_DIR.lockfile 
+		fi 
 
 		# build it
 		./gradlew distZip
-		# cp build to LSP_BUILDS folder
-		cp `find . -name "*ide*zip"` $BUILD_DIR
-		# 
-		cd $BUILD_DIR
-		# extract it
-		unzip -o *.zip -d $languageName-$version
+
+		# syncronize copying the binary
+		(
+		flock -e 200
+			
+			# cp build to LSP_BUILDS folder
+			cp `find . -name "*ide*zip"` $BUILD_DIR
+
+			# 
+			cd $BUILD_DIR
+			# extract it
+			unzip -o *.zip -d $languageName-$version
+
+		) 200>/tmp/CopyToBuildDir.lock 
+
 		# clean up
 		rm *.zip
 		# leave
@@ -69,13 +97,13 @@ build_LSP_binary() {
 	fi
 }
 
-concurrentInstallIntoLocalMavenRepo() {
+buildLangServerAndInstallConcurrently() {
 
 	BUILD_DIR=$1
 	languageName=$2
 	version=$3
 
-	screen -dmS concurrentInstall-$languageName bash -c "bash -x concurrentGradleInstall.sh $BUILD_DIR $languageName $version"			
+	screen -dmS concurrentBuildAndInstall-$languageName bash -c "bash -x concurrentBuInstall.sh $BUILD_DIR $languageName $version"			
 	# instal it
 	# mkdir ../___$languageName
 	# rsync -aP --exclude=$BUILD_DIR * ../___$languageName
@@ -86,13 +114,27 @@ concurrentInstallIntoLocalMavenRepo() {
 	# 
 }
 
+createTemporaryFolderCopyForBuild() {
+
+	languageName=$2
+	version=$3
+
+	( 
+	flock -e 200
+
+		# checkout LSP configuration to be started --- not used currently
+		git checkout $languageName-$version
+		# copy plain project without git meta data and branches
+		git checkout-index -a -f --prefix=tmpBuildLang-$languageName-$version/
+
+	) 200>/tmp/$BUILD_DIR.lockfile 
+
+}
+
 installLanguageIntoLocalMavenRepo() {
 
 	# instal it
 	./gradlew install
-	# clean up
-	#cd ~/.m2/repository/de/btu/sst/swt/xtextLsp/
-	# 
 }
 
 ########################################################################
