@@ -49,19 +49,22 @@ buildLangServerBinaryFromSubfolder() {
 	fi
 }
 
+########################################################################
+################################ SCRIPT ################################
+########################################################################
 
 ( 
 flock -e 200
 
 	# checkout LSP configuration to be started --- not used currently
-	git checkout $languageName-$version
+	git checkout $languageName#$version
 	# copy plain project without git meta data and branches
-	git checkout-index -a -f --prefix=tmpBuildLang-$languageName-$version/
+	git checkout-index -a -f --prefix=tmpBuildFolder-$languageName-$version/
 
 ) 200>/tmp/$BUILD_DIR.lockfile 
 
 # enter build dir
-cd tmpBuildLang-$languageName-$version/
+cd tmpBuildFolder-$languageName-$version/
 
 # build language server binary
 buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
@@ -72,7 +75,7 @@ buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 # exit and 
 cd ..
 # clean up
-rm -rf tmpBuildLang-$languageName-$version/
+rm -rf tmpBuildFolder-$languageName-$version/
 # 
 
 # rsync -aP --exclude=$BUILD_DIR * ../___$languageName-$version

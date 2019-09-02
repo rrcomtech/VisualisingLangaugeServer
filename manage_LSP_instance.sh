@@ -20,33 +20,33 @@ performTask() {
 		if [ $buildTask == "initialize" ]; then
 			# build_LSP_binary $BUILD_DIR $languageName $version
 			# installLanguageIntoLocalMavenRepo
-			buildLangServerAndInstallConcurrently $BUILD_DIR $$languageName $version
+			buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
 
 		elif [ $buildTask == "install" ]; then
 
 			# create tempory build folder
 			createTemporaryFolderCopyForBuild $languageName $version
 			# enter it
-			cd tmpBuildLang-$languageName-$version/
+			cd tmpBuildFolder-$languageName-$version/
 			# install it
 			installLanguageIntoLocalMavenRepo
 			# leave it
 			cd ..	
 			# clean it
-			rm -rf tmpBuildLang-$languageName-$version/
+			rm -rf tmpBuildFolder-$languageName-$version/
 
 		elif [ $buildTask == "build" ]; then
 
 			# create tempory build folder
 			createTemporaryFolderCopyForBuild $languageName $version
 			# enter it
-			cd tmpBuildLang-$languageName-$version/
+			cd tmpBuildFolder-$languageName-$version/
 			# install it
 			buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 			# leave it
 			cd ..	
 			# clean it
-			rm -rf tmpBuildLang-$languageName-$version/
+			rm -rf tmpBuildFolder-$languageName-$version/
 		fi
 
 }
@@ -59,7 +59,7 @@ buildLangServerBinaryFromSubfolder() {
 	version=$3
 
 	# check if LSP has been built in the mean time
-	if [ ! -d "$BUILD_DIR/$languageName-$version" ]; then
+	if [ ! -d "$BUILD_DIR/$languageName\#$version" ]; then
 
 		if [ ! -d "$BUILD_DIR" ]; then
 		# syncronize folder creation, but only do if it's really neccessary
@@ -85,7 +85,7 @@ buildLangServerBinaryFromSubfolder() {
 			# 
 			cd $BUILD_DIR
 			# extract it
-			unzip -o *.zip -d $languageName-$version
+			unzip -o *.zip -d $languageName#$version
 
 		) 200>/tmp/CopyToBuildDir.lock 
 
@@ -103,7 +103,8 @@ buildLangServerAndInstallConcurrently() {
 	languageName=$2
 	version=$3
 
-	screen -dmS concurrentBuildAndInstall-$languageName bash -c "bash -x concurrentBuInstall.sh $BUILD_DIR $languageName $version"			
+	screen -dmS concurrentBuildAndInstall-$languageName bash -c "bash -x concurrentBuildAndInstall.sh $BUILD_DIR $languageName $version"			
+	# bash -x concurrentBuildAndInstall.sh $BUILD_DIR $languageName $version
 	# instal it
 	# mkdir ../___$languageName
 	# rsync -aP --exclude=$BUILD_DIR * ../___$languageName
@@ -116,16 +117,16 @@ buildLangServerAndInstallConcurrently() {
 
 createTemporaryFolderCopyForBuild() {
 
-	languageName=$2
-	version=$3
+	languageName=$1
+	version=$2
 
 	( 
 	flock -e 200
 
 		# checkout LSP configuration to be started --- not used currently
-		git checkout $languageName-$version
+		git checkout $languageName#$version
 		# copy plain project without git meta data and branches
-		git checkout-index -a -f --prefix=tmpBuildLang-$languageName-$version/
+		git checkout-index -a -f --prefix=tmpBuildFolder-$languageName-$version/
 
 	) 200>/tmp/$BUILD_DIR.lockfile 
 
@@ -150,16 +151,20 @@ installLanguageIntoLocalMavenRepo() {
 # LSP wrapper binaries and install the language build into the local repository
 if [[ $command == "init" ]]; then
 
-	git branch > tmp.txt
-	availableBranches=`cat tmp.txt | grep -v develop | grep -v master | grep -v templateLang`
+	git branch > branches.current
+	availableBranches=`cat branches.current | grep -v develop | grep -v master | grep -v templateLang`
 	# remove asteriks of current branch
 	availableBranches=${availableBranches//"*"/" "}  
 
 	for currLang in $availableBranches; do 
-		performTask initialize $currLang
+
+		_languageName=${currLang%\#*}  
+		_version=${currLang#*\#}
+
+		performTask initialize $_languageName $_version
 	done
 
-	rm tmp.txt
+	rm branches.current
 
 #----------------------------------------------------------------------
 #------------------------------- START --------------------------------
@@ -174,8 +179,8 @@ elif [[ $command == "start" ]]; then
 	performTask build $languageName $version
 
 	# start LSP in screen
-	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName-$version`
-	screen -dmS LSP-$languageName-$version-$port bash -c "./mydsl-socket $port"
+	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
+	screen -dmS LSP-$languageName#$version-$port bash -c "./mydsl-socket $port"
 
 	# go back to root folder 
 	# projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
@@ -225,7 +230,7 @@ elif [[ $command == "createNewLanguage" ]]; then
 
 		git checkout templateLang		
 		# last slash is important, otherwise it will not be interpreted as a folder
-		git checkout-index -a -f --prefix=tmpLang-$languageName-$version/
+		git checkout-index -a -f --prefix=tmpLang-$languageName#$version/
 
 	) 200>/tmp/$BUILD_DIR.lockfile 
 
@@ -247,7 +252,7 @@ elif [[ $command == "buildNewLSP" ]]; then
 	BUILD_DIR="LSP_BUILDS"
 	version=$commandParamOne
 
-	cd tmpLang-$languageName-$version
+	cd tmpLang-$languageName#$version
 
 	# validate status by buliding it
 	./gradlew compileJava
@@ -257,7 +262,7 @@ elif [[ $command == "buildNewLSP" ]]; then
 		exit 1
 	# the build worked, thus we want to clean up
 	else 
-		screen -dmS BUILD-$languageName-$version bash -c "bash buildLSPAndInstallLanguage.sh ../LSP_BUILDS $languageName $version"
+		screen -dmS BUILD-$languageName#$version bash -c "bash buildLSPAndInstallLanguage.sh ../LSP_BUILDS $languageName $version"
 		exit 0
 	fi
 
