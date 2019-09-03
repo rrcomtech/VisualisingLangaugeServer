@@ -78,9 +78,13 @@ buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 cd ..
 # clean up
 #pwd
-#ls
+echo " ## BEFORE"
+ls tmpBuildFolder*
+echo " ## "
 rm -rf tmpBuildFolder-$languageName-$version/
-#ls
+echo " ## AFTER"
+ls tmpBuildFolder*
+echo " ##"
 # 
 #sleep 5s
 
