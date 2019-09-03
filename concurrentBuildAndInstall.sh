@@ -53,6 +53,9 @@ buildLangServerBinaryFromSubfolder() {
 ################################ SCRIPT ################################
 ########################################################################
 
+screen logfile flush 0
+screen 
+
 ( 
 flock -e 200
 
