@@ -80,5 +80,6 @@ cd ..
 # clean up
 rm -rf tmpBuildFolder-$languageName-$version/
 # 
+sleep 5s
 
 # rsync -aP --exclude=$BUILD_DIR * ../___$languageName-$version
