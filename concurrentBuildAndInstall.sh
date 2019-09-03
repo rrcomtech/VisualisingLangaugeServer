@@ -41,13 +41,13 @@ buildLangServerBinaryFromSubfolder() {
 			# extract it
 			unzip -o *.zip -d $languageName-$version
 
-		) 200>/tmp/CopyToBuildDir.lock 
+			# clean up
+			rm *.zip
+			# leave
+			cd -
+			#
 
-		# clean up
-		rm *.zip
-		# leave
-		cd -
-		#
+		) 200>/tmp/CopyToBuildDir.lock 		
 	fi
 }
 
