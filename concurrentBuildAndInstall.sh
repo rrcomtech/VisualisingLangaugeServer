@@ -1,3 +1,5 @@
+#!/bin/bash
+
 BUILD_DIR=$1
 languageName=$2
 version=$3
@@ -78,7 +80,10 @@ buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 # exit and 
 cd ..
 # clean up
+pwd
+ls
 rm -rf tmpBuildFolder-$languageName-$version/
+ls
 # 
 sleep 5s
 
