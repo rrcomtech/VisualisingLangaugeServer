@@ -55,9 +55,6 @@ buildLangServerBinaryFromSubfolder() {
 ################################ SCRIPT ################################
 ########################################################################
 
-screen logfile flush 0
-screen 
-
 ( 
 flock -e 200
 
@@ -80,11 +77,11 @@ buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 # exit and 
 cd ..
 # clean up
-pwd
-ls
+#pwd
+#ls
 rm -rf tmpBuildFolder-$languageName-$version/
-ls
+#ls
 # 
-sleep 5s
+#sleep 5s
 
 # rsync -aP --exclude=$BUILD_DIR * ../___$languageName-$version
