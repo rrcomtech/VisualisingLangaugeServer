@@ -103,8 +103,8 @@ buildLangServerAndInstallConcurrently() {
 	languageName=$2
 	version=$3
 
-	screen -dmS concurrentBuildAndInstall-$languageName bash -c "bash -x concurrentBuildAndInstall.sh $BUILD_DIR $languageName $version"			
-	#screen -dmS concurrentBuildAndInstall-$languageName -L -Logfile concurrentBuildAndInstall-$languageName.log bash -c "bash -x concurrentBuildAndInstall.sh $BUILD_DIR $languageName $version"			
+	#screen -dmS concurrentBuildAndInstall-$languageName bash -c "bash -x concurrentBuildAndInstall.sh $BUILD_DIR $languageName $version"			
+	screen -dmS concurrentBuildAndInstall-$languageName -L -Logfile concurrentBuildAndInstall-$languageName.log bash -c "bash -x concurrentBuildAndInstall.sh $BUILD_DIR $languageName $version"			
 	
 	# instal it
 	# mkdir ../___$languageName
