@@ -73,27 +73,26 @@ buildLangServerBinaryFromSubfolder() {
 		fi 
 
 		# build it
-		./gradlew distZip
+		./gradlew assembleDist
 
 		# syncronize copying the binary
 		(
 		flock -e 200
 			
 			# cp build to LSP_BUILDS folder
-			cp `find . -name "*ide*zip"` $BUILD_DIR
-
+			cp `find . -name "*ide*tar"` $BUILD_DIR
 			# 
 			cd $BUILD_DIR
 			# extract it
-			unzip -o *.zip -d $languageName#$version
+			# 7z x -y *zip
+			tar xvvf *tar
+			mv org.xtext.example.mydsl.ide-$version $languageName#$version
+			# clean up
+			rm *.tar
 
 		) 200>/tmp/CopyToBuildDir.lock 
-
-		# clean up
-		rm *.zip
-		# leave
-		cd -
 		#
+		# no further directory changes needed as everything in the flock block is done in a separate process
 	fi
 }
 
@@ -180,7 +179,14 @@ elif [[ $command == "start" ]]; then
 	performTask build $languageName $version
 
 	# start LSP in screen
+	# ls=`find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
+	#
 	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
+	#
+	echo "###"
+	echo `pwd`
+	echo "###"
+	#echo "screen -dmS LSP-$languageName#$version-$port bash -c \"./mydsl-socket $port\""
 	screen -dmS LSP-$languageName#$version-$port bash -c "./mydsl-socket $port"
 
 	# go back to root folder 
