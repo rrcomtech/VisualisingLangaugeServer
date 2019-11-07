@@ -87,14 +87,12 @@ buildLangServerBinaryFromSubfolder() {
 			# 7z x -y *zip
 			tar xvvf *tar
 			mv org.xtext.example.mydsl.ide-$version $languageName#$version
+			# clean up
+			rm *.tar
 
 		) 200>/tmp/CopyToBuildDir.lock 
-
-		# clean up
-		rm *.tar
-		# leave
-		cd -
 		#
+		# no further directory changes needed as everything in the flock block is done in a separate process
 	fi
 }
 
@@ -181,11 +179,13 @@ elif [[ $command == "start" ]]; then
 	performTask build $languageName $version
 
 	# start LSP in screen
-	ls=`find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
+	# ls=`find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
 	#
 	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
 	#
-	echo "###$ls###"
+	echo "###"
+	echo `pwd`
+	echo "###"
 	#echo "screen -dmS LSP-$languageName#$version-$port bash -c \"./mydsl-socket $port\""
 	screen -dmS LSP-$languageName#$version-$port bash -c "./mydsl-socket $port"
 
