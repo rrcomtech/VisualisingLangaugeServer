@@ -142,6 +142,7 @@ installLanguageIntoLocalMavenRepo() {
 ################################ SCRIPT ################################
 ########################################################################
 
+BUILD_DIR="LSP_BUILDS"
 
 #----------------------------------------------------------------------
 #------------------------------- INIT ---------------------------------
@@ -176,21 +177,25 @@ elif [[ $command == "start" ]]; then
 	version=$commandParamOne
 	port=$commandParamTwo
 
-	performTask build $languageName $version
+	if [ ! -d $BUILD_DIR/$languageName#$version ]; then
+
+		performTask build $languageName $version
+
+	fi 
 
 	# start LSP in screen
-	# ls=`find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
+	# ls=`find . -type d -name "bin" | grep $BUILD_DIR/$languageName#$version`
 	#
-	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName#$version`
+	cd `find . -type d -name "bin" | grep $BUILD_DIR/$languageName#$version`
 	#
-	echo "###"
-	echo `pwd`
-	echo "###"
+	# echo "###"
+	# echo `pwd`
+	# echo "###"
 	#echo "screen -dmS LSP-$languageName#$version-$port bash -c \"./mydsl-socket $port\""
 	screen -dmS LSP-$languageName#$version-$port bash -c "./mydsl-socket $port"
 
 	# go back to root folder 
-	# projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
+	# projectRoot=`pwd | awk -v rootFolder="$BUILD_DIR" '{print substr($_,0,index($_,rootFolder)-1)}'`
 	# echo "changing back to $projectRoot"
 	# cd $projectRoot
 
