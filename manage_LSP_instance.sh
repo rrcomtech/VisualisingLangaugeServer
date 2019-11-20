@@ -174,7 +174,7 @@ elif [[ $command == "start" ]]; then
 	version=$commandParamOne
 	port=$commandParamTwo
 
-	currTime=`date "+TIME: %H:%M:%S:%N"`;
+	currTime=`date "+%H:%M:%S"`;
 	echo "## $currTime -- building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> .logfile
 	#
 	(
@@ -184,12 +184,12 @@ elif [[ $command == "start" ]]; then
 
 		performTask build $languageName $version
 
-		currTime=`date "+TIME: %H:%M:%S:%N"`;
+		currTime=`date "+%H:%M:%S"`;
 		echo "## $currTime -- finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile
 
 	else 
 
-		currTime=`date "+TIME: %H:%M:%S:%N"`;
+		currTime=`date "+%H:%M:%S"`;
 		echo "## $currTime -- $languageName in version $version has been built already -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile		
 
 	fi 
