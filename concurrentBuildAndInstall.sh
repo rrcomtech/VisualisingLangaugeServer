@@ -12,6 +12,11 @@ buildLangServerBinaryFromSubfolder() {
 	languageName=$2
 	version=$3
 
+	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile "
+	#
+	(
+	flock -e 200
+
 	# check if LSP has been built in the mean time
 	if [ ! -d "$BUILD_DIR/$languageName-_-$version" ]; then
 
@@ -45,6 +50,10 @@ buildLangServerBinaryFromSubfolder() {
 
 		) 200>/tmp/CopyToBuildDir.lock 		
 	fi
+
+	) 200>/tmp/$languageName-_-$version.lockfile 
+	#
+	echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile "
 }
 
 ########################################################################

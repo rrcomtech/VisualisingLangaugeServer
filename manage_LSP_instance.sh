@@ -17,19 +17,8 @@ performTask() {
 
 	if [ $buildTask == "initialize" ]; then
 		# build_LSP_binary $BUILD_DIR $languageName $version
-		# installLanguageIntoLocalMavenRepo
-		echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile "
-		#
-		(
-		flock -e 200
+		buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
 		
-			buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
-		
-		) 200>/tmp/$languageName-_-$version.lockfile 
-		#
-		echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile "
-		
-
 	elif [ $buildTask == "install" ]; then
 
 		# create tempory build folder
