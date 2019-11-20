@@ -57,7 +57,7 @@ buildLangServerBinaryFromSubfolder() {
 	version=$3
 
 	# check if LSP has been built in the mean time
-	if [ ! -d "$BUILD_DIR/$languageName_-_$version" ]; then
+	if [ ! -d "$BUILD_DIR/$languageName-_-$version" ]; then
 
 		if [ ! -d "$BUILD_DIR" ]; then
 		# syncronize folder creation, but only do if it's really neccessary
@@ -83,7 +83,7 @@ buildLangServerBinaryFromSubfolder() {
 			cd $BUILD_DIR
 			# extract it
 			tar xvvf *tar
-			mv org.xtext.example.mydsl.ide-$version $languageName_-_$version
+			mv org.xtext.example.mydsl.ide-$version $languageName-_-$version
 			# clean up
 			rm *.tar
 
@@ -121,7 +121,7 @@ createTemporaryFolderCopyForBuild() {
 	flock -e 200
 
 		# checkout LSP configuration to be started --- not used currently
-		git checkout $languageName_-_$version
+		git checkout $languageName-_-$version
 		# copy plain project without git meta data and branches
 		git checkout-index -a -f --prefix=tmpBuildFolder-$languageName-$version/
 
@@ -156,8 +156,8 @@ if [[ $command == "init" ]]; then
 
 	for currLang in $availableBranches; do 
 
-		_languageName=${currLang%_-_*}  
-		_version=${currLang#*_-_}
+		_languageName=${currLang%-_-*}  
+		_version=${currLang#*-_-}
 
 		performTask initialize $_languageName $_version
 	done
@@ -174,22 +174,22 @@ elif [[ $command == "start" ]]; then
 	version=$commandParamOne
 	port=$commandParamTwo
 
-	if [ ! -d $BUILD_DIR/$languageName_-_$version ]; then
+	if [ ! -d $BUILD_DIR/$languageName-_-$version ]; then
 
 		performTask build $languageName $version
 
 	fi 
 
 	# start LSP in screen
-	# ls=`find . -type d -name "bin" | grep $BUILD_DIR/$languageName_-_$version`
+	# ls=`find . -type d -name "bin" | grep $BUILD_DIR/$languageName-_-$version`
 	#
-	cd `find . -type d -name "bin" | grep $BUILD_DIR/$languageName_-_$version`
+	cd `find . -type d -name "bin" | grep $BUILD_DIR/$languageName-_-$version`
 	#
 	# echo "###"
 	# echo `pwd`
 	# echo "###"
-	#echo "screen -dmS LSP-$languageName_-_$version-$port bash -c \"./mydsl-socket $port\""
-	screen -dmS LSP-$languageName_-_$version-$port bash -c "./mydsl-socket $port"
+	#echo "screen -dmS LSP-$languageName-_-$version-$port bash -c \"./mydsl-socket $port\""
+	screen -dmS LSP-$languageName-_-$version-$port bash -c "./mydsl-socket $port"
 
 	# go back to root folder 
 	# projectRoot=`pwd | awk -v rootFolder="$BUILD_DIR" '{print substr($_,0,index($_,rootFolder)-1)}'`
@@ -239,7 +239,7 @@ elif [[ $command == "createNewLanguage" ]]; then
 
 		git checkout templateLang		
 		# last slash is important, otherwise it will not be interpreted as a folder
-		git checkout-index -a -f --prefix=tmpLang-$languageName_-_$version/
+		git checkout-index -a -f --prefix=tmpLang-$languageName-_-$version/
 
 	) 200>/tmp/$BUILD_DIR.lockfile 
 
@@ -261,7 +261,7 @@ elif [[ $command == "buildNewLSP" ]]; then
 	BUILD_DIR="LSP_BUILDS"
 	version=$commandParamOne
 
-	cd tmpLang-$languageName_-_$version
+	cd tmpLang-$languageName-_-$version
 
 	# validate status by buliding it
 	./gradlew compileJava
@@ -271,7 +271,7 @@ elif [[ $command == "buildNewLSP" ]]; then
 		exit 1
 	# the build worked, thus we want to clean up
 	else 
-		screen -dmS BUILD-$languageName_-_$version bash -c "bash buildLSPAndInstallLanguage.sh ../LSP_BUILDS $languageName $version"
+		screen -dmS BUILD-$languageName-_-$version bash -c "bash buildLSPAndInstallLanguage.sh ../LSP_BUILDS $languageName $version"
 		exit 0
 	fi
 
