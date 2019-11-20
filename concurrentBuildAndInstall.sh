@@ -12,7 +12,7 @@ buildLangServerBinaryFromSubfolder() {
 	languageName=$2
 	version=$3
 
-	currTime=`date "+TIME: %H:%M:%S:%N"`;
+	currTime=`date "+%H:%M:%S"`;
 	echo "## $currTime -- building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> ../.logfile
 	#
 	(
@@ -54,7 +54,7 @@ buildLangServerBinaryFromSubfolder() {
 
 	) 200>/tmp/$languageName-_-$version.lockfile 
 	#
-	currTime=`date "+TIME: %H:%M:%S:%N"`;
+	currTime=`date "+%H:%M:%S"`;
 	echo "## $currTime -- finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> ../.logfile
 }
 
