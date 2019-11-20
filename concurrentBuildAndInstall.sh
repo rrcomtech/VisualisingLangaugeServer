@@ -12,7 +12,8 @@ buildLangServerBinaryFromSubfolder() {
 	languageName=$2
 	version=$3
 
-	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile "
+	echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
+	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> .logfile
 	#
 	(
 	flock -e 200
@@ -53,7 +54,8 @@ buildLangServerBinaryFromSubfolder() {
 
 	) 200>/tmp/$languageName-_-$version.lockfile 
 	#
-	echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile "
+	echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
+	echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile
 }
 
 ########################################################################
