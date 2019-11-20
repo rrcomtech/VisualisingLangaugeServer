@@ -183,7 +183,7 @@ elif [[ $command == "start" ]]; then
 	# start LSP in screen
 	# ls=`find . -type d -name "bin" | grep $BUILD_DIR/$languageName-_-$version`
 	#
-	cd `find . -type d -name "bin" | grep $BUILD_DIR/$languageName-_-$version`
+	cd `find . -type d -name "bin" | grep $languageName-_-$version`
 	#
 	# echo "###"
 	# echo `pwd`
