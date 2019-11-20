@@ -22,7 +22,7 @@ performTask() {
 	elif [ $buildTask == "install" ]; then
 
 		# create tempory build folder
-		createTemporaryFolderCopyForBuild $languageName $version
+		createTemporaryCopyOfLanguage $languageName $version
 		# enter it
 		cd tmpBuildFolder-$languageName-$version/
 		# install it
@@ -35,7 +35,7 @@ performTask() {
 	elif [ $buildTask == "build" ]; then
 
 		# create tempory build folder
-		createTemporaryFolderCopyForBuild $languageName $version
+		createTemporaryCopyOfLanguage $languageName $version
 		# enter it
 		cd tmpBuildFolder-$languageName-$version/
 		# install it
@@ -112,7 +112,7 @@ buildLangServerAndInstallConcurrently() {
 	# 
 }
 
-createTemporaryFolderCopyForBuild() {
+createTemporaryCopyOfLanguage() {
 
 	languageName=$1
 	version=$2
@@ -246,26 +246,45 @@ elif [[ $command == "killAll-FromLanguage" ]]; then
 #----------------------------------------------------------------------
 
 ## will create a copy of an LSP project in order to start with an git example project
-elif [[ $command == "createNewLanguage" ]]; then
+elif [[ $command == "createNewLanguageVersion" ]]; then
 
 	BUILD_DIR="LSP_BUILDS"
 	version=$commandParamOne
+	projectPath=$commandParamTwo
+	targetGrammarFile=$./org.xtext.example.mydsl/bin/main/org/xtext/example/mydsl/MyDsl.xtext
 
-	# briefly lock lock the folder
-	( 
-	flock -e 200
+	# createTemporaryCopyOfLanguage 
 
-		git checkout templateLang		
-		# last slash is important, otherwise it will not be interpreted as a folder
-		git checkout-index -a -f --prefix=tmpLang-$languageName-_-$version/
+	# # briefly lock lock the folder
+	# ( 
+	# flock -e 200
 
-	) 200>/tmp/$BUILD_DIR.lockfile 
+	# 	git checkout $languageName-_-$version
+	# 	# last slash is important, otherwise it will not be interpreted as a folder
+	# 	git checkout-index -a -f --prefix=tmpLang-$languageName-_-$version/
+
+	# ) 200>/tmp/$BUILD_DIR.lockfile 
+
+	git checkout -b $languageName-_-$version 
+
+	#
+	# TODO 
+	#
+	# As of now only xtext files are treated
+	#
+	grammarFile=`find $projectPath -iname "*\.xtext" | head -1`
+
+	cp $grammarFile $targetGrammarFile
+	git add $targetGrammarFile
+	git commit -m "Added new version $version of language $languageName"
+	git push --set-upstream origin $languageName-_-$version
+
 
 	# fix build configuration
 	# adapt name configuration
-	gradleConfig=`cat settings.gradle | head -3`
-	echo $gradleConfig > settings.gradle
-	echo "rootProject.name = '$languageName'" > settings.gradle
+	# gradleConfig=`cat settings.gradle | head -3`
+	# echo $gradleConfig > settings.gradle
+	# echo "rootProject.name = '$languageName'" > settings.gradle
 	# adapt version configuration
 	echo "version = $version" > gradle.properties
 
