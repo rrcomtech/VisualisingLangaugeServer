@@ -13,7 +13,7 @@ buildLangServerBinaryFromSubfolder() {
 	version=$3
 
 	# check if LSP has been built in the mean time
-	if [ ! -d "$BUILD_DIR/$languageName-$version" ]; then
+	if [ ! -d "$BUILD_DIR/$languageName-_-$version" ]; then
 
 		if [ ! -d "$BUILD_DIR" ]; then
 		# syncronize folder creation, but only do if it's really neccessary
@@ -27,25 +27,21 @@ buildLangServerBinaryFromSubfolder() {
 		fi 
 
 		# build it
-		./gradlew distZip
+		./gradlew assembleDist
 
 		# syncronize copying the binary
 		(
-			flock -e 200
+		flock -e 200
 			
 			# cp build to LSP_BUILDS folder
-			cp `find . -name "*ide*zip"` $BUILD_DIR
-
+			cp `find . -name "*ide*tar"` $BUILD_DIR
 			# 
 			cd $BUILD_DIR
 			# extract it
-			unzip -o *.zip -d $languageName-$version
-
+			tar xvvf *tar
+			mv org.xtext.example.mydsl.ide-$version $languageName-_-$version
 			# clean up
-			rm *.zip
-			# leave
-			cd -
-			#
+			rm *.tar
 
 		) 200>/tmp/CopyToBuildDir.lock 		
 	fi
@@ -59,7 +55,7 @@ buildLangServerBinaryFromSubfolder() {
 flock -e 200
 
 	# checkout LSP configuration to be started --- not used currently
-	git checkout $languageName#$version
+	git checkout $languageName-_-$version
 	# copy plain project without git meta data and branches
 	git checkout-index -a -f --prefix=tmpBuildFolder-$languageName-$version/
 
