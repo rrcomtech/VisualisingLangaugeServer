@@ -174,8 +174,8 @@ elif [[ $command == "start" ]]; then
 	version=$commandParamOne
 	port=$commandParamTwo
 
-	echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
-	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> .logfile
+	currTime=`date "+TIME: %H:%M:%S:%N"`;
+	echo "## $currTime -- building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> .logfile
 	#
 	(
 	flock -e 200
@@ -184,13 +184,13 @@ elif [[ $command == "start" ]]; then
 
 		performTask build $languageName $version
 
-		echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
-		echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile
+		currTime=`date "+TIME: %H:%M:%S:%N"`;
+		echo "## $currTime -- finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile
 
 	else 
 
-		echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
-		echo "# $languageName in version $version has been built already -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile		
+		currTime=`date "+TIME: %H:%M:%S:%N"`;
+		echo "## $currTime -- $languageName in version $version has been built already -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile		
 
 	fi 
 
