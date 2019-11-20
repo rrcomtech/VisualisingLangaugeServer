@@ -18,7 +18,17 @@ performTask() {
 	if [ $buildTask == "initialize" ]; then
 		# build_LSP_binary $BUILD_DIR $languageName $version
 		# installLanguageIntoLocalMavenRepo
-		buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
+		echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile "
+		#
+		(
+		flock -e 200
+		
+			buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
+		
+		) 200>/tmp/$languageName-_-$version.lockfile 
+		#
+		echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile "
+		
 
 	elif [ $buildTask == "install" ]; then
 
@@ -56,6 +66,11 @@ buildLangServerBinaryFromSubfolder() {
 	languageName=$2
 	version=$3
 
+	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile "
+	#
+	(
+	flock -e 200
+
 	# check if LSP has been built in the mean time
 	if [ ! -d "$BUILD_DIR/$languageName-_-$version" ]; then
 
@@ -91,6 +106,10 @@ buildLangServerBinaryFromSubfolder() {
 		#
 		# no further directory changes needed as everything in the flock block is done in a separate process
 	fi
+
+	) 200>/tmp/$languageName-_-$version.lockfile 
+	#
+	echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile "
 }
 
 buildLangServerAndInstallConcurrently() {
