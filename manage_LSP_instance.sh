@@ -55,12 +55,6 @@ buildLangServerBinaryFromSubfolder() {
 	languageName=$2
 	version=$3
 
-	echo `date "+TIME: %H:%M:%S:%N"` >> ../.logfile
-	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> ../.logfile
-	#
-	(
-	flock -e 200
-
 	# check if LSP has been built in the mean time
 	if [ ! -d "$BUILD_DIR/$languageName-_-$version" ]; then
 
@@ -97,10 +91,6 @@ buildLangServerBinaryFromSubfolder() {
 		# no further directory changes needed as everything in the flock block is done in a separate process
 	fi
 
-	) 200>/tmp/$languageName-_-$version.lockfile 
-	#
-	echo `date "+TIME: %H:%M:%S:%N"` >> ../.logfile
-	echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> ../.logfile
 }
 
 buildLangServerAndInstallConcurrently() {
@@ -184,11 +174,29 @@ elif [[ $command == "start" ]]; then
 	version=$commandParamOne
 	port=$commandParamTwo
 
+	echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
+	echo "# building $languageName in version $version --> locking /tmp/$languageName-_-$version.lockfile " >> .logfile
+	#
+	(
+	flock -e 200
+
 	if [ ! -d $BUILD_DIR/$languageName-_-$version ]; then
 
 		performTask build $languageName $version
 
+		echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
+		echo "# finished building $languageName in version $version -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile
+
+	else 
+
+		echo `date "+TIME: %H:%M:%S:%N"` >> .logfile
+		echo "# $languageName in version $version has been built already -- releasing /tmp/$languageName-_-$version.lockfile " >> .logfile		
+
 	fi 
+
+	) 200>/tmp/$languageName-_-$version.lockfile 
+	#
+	
 
 	# start LSP in screen
 	# ls=`find . -type d -name "bin" | grep $BUILD_DIR/$languageName-_-$version`
