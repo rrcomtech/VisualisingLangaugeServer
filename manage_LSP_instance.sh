@@ -15,39 +15,37 @@ performTask() {
 	languageName=$2
 	version=$3
 
-	
-	
-		if [ $buildTask == "initialize" ]; then
-			# build_LSP_binary $BUILD_DIR $languageName $version
-			# installLanguageIntoLocalMavenRepo
-			buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
+	if [ $buildTask == "initialize" ]; then
+		# build_LSP_binary $BUILD_DIR $languageName $version
+		# installLanguageIntoLocalMavenRepo
+		buildLangServerAndInstallConcurrently $BUILD_DIR $languageName $version
 
-		elif [ $buildTask == "install" ]; then
+	elif [ $buildTask == "install" ]; then
 
-			# create tempory build folder
-			createTemporaryFolderCopyForBuild $languageName $version
-			# enter it
-			cd tmpBuildFolder-$languageName-$version/
-			# install it
-			installLanguageIntoLocalMavenRepo
-			# leave it
-			cd ..	
-			# clean it
-			rm -rf tmpBuildFolder-$languageName-$version/
+		# create tempory build folder
+		createTemporaryFolderCopyForBuild $languageName $version
+		# enter it
+		cd tmpBuildFolder-$languageName-$version/
+		# install it
+		installLanguageIntoLocalMavenRepo
+		# leave it
+		cd ..	
+		# clean it
+		rm -rf tmpBuildFolder-$languageName-$version/
 
-		elif [ $buildTask == "build" ]; then
+	elif [ $buildTask == "build" ]; then
 
-			# create tempory build folder
-			createTemporaryFolderCopyForBuild $languageName $version
-			# enter it
-			cd tmpBuildFolder-$languageName-$version/
-			# install it
-			buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
-			# leave it
-			cd ..	
-			# clean it
-			rm -rf tmpBuildFolder-$languageName-$version/
-		fi
+		# create tempory build folder
+		createTemporaryFolderCopyForBuild $languageName $version
+		# enter it
+		cd tmpBuildFolder-$languageName-$version/
+		# install it
+		buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
+		# leave it
+		cd ..	
+		# clean it
+		rm -rf tmpBuildFolder-$languageName-$version/
+	fi
 
 }
 
