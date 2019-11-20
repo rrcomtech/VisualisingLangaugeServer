@@ -73,27 +73,25 @@ buildLangServerBinaryFromSubfolder() {
 		fi 
 
 		# build it
-		./gradlew distZip
+		./gradlew assembleDist
 
 		# syncronize copying the binary
 		(
 		flock -e 200
 			
 			# cp build to LSP_BUILDS folder
-			cp `find . -name "*ide*zip"` $BUILD_DIR
-
+			cp `find . -name "*ide*tar"` $BUILD_DIR
 			# 
 			cd $BUILD_DIR
 			# extract it
-			unzip -o *.zip -d $languageName_-_$version
+			tar xvvf *tar
+			mv org.xtext.example.mydsl.ide-$version $languageName_-_$version
+			# clean up
+			rm *.tar
 
 		) 200>/tmp/CopyToBuildDir.lock 
-
-		# clean up
-		rm *.zip
-		# leave
-		cd -
 		#
+		# no further directory changes needed as everything in the flock block is done in a separate process
 	fi
 }
 
@@ -143,6 +141,7 @@ installLanguageIntoLocalMavenRepo() {
 ################################ SCRIPT ################################
 ########################################################################
 
+BUILD_DIR="LSP_BUILDS"
 
 #----------------------------------------------------------------------
 #------------------------------- INIT ---------------------------------
@@ -177,14 +176,25 @@ elif [[ $command == "start" ]]; then
 	version=$commandParamOne
 	port=$commandParamTwo
 
-	performTask build $languageName $version
+	if [ ! -d $BUILD_DIR/$languageName_-_$version ]; then
+
+		performTask build $languageName $version
+
+	fi 
 
 	# start LSP in screen
-	cd `find . -type d -name "bin" | grep LSP_BUILDS/$languageName_-_$version`
+	# ls=`find . -type d -name "bin" | grep $BUILD_DIR/$languageName_-_$version`
+	#
+	cd `find . -type d -name "bin" | grep $BUILD_DIR/$languageName_-_$version`
+	#
+	# echo "###"
+	# echo `pwd`
+	# echo "###"
+	#echo "screen -dmS LSP-$languageName_-_$version-$port bash -c \"./mydsl-socket $port\""
 	screen -dmS LSP-$languageName_-_$version-$port bash -c "./mydsl-socket $port"
 
 	# go back to root folder 
-	# projectRoot=`pwd | awk -v rootFolder="LSP_BUILDS" '{print substr($_,0,index($_,rootFolder)-1)}'`
+	# projectRoot=`pwd | awk -v rootFolder="$BUILD_DIR" '{print substr($_,0,index($_,rootFolder)-1)}'`
 	# echo "changing back to $projectRoot"
 	# cd $projectRoot
 
