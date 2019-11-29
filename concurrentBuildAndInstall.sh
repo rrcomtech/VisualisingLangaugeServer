@@ -78,21 +78,14 @@ cd tmpBuildFolder-$languageName-$version/
 # build language server binary
 buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 
+# configure Standalone Xtext Generator Setup
+echo "version = ${version}-${languageName}" > gradle.properties
+
 # install language
 ./gradlew install
 
 # exit and 
 cd ..
 # clean up
-#pwd
-echo " ## BEFORE"
-ls tmpBuildFolder*
-echo " ## "
 rm -rf tmpBuildFolder-$languageName-$version/
-echo " ## AFTER"
-ls tmpBuildFolder*
-echo " ##"
 # 
-#sleep 5s
-
-# rsync -aP --exclude=$BUILD_DIR * ../___$languageName-$version

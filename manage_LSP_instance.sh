@@ -38,7 +38,7 @@ performTask() {
 		createTemporaryCopyOfLanguage $languageName $version
 		# enter it
 		cd tmpBuildFolder-$languageName-$version/
-		# install it
+		# build LSP binary
 		buildLangServerBinaryFromSubfolder $BUILD_DIR $languageName $version
 		# leave it
 		cd ..	
