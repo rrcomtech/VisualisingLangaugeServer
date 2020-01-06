@@ -223,8 +223,8 @@ elif [[ $command == "kill" ]]; then
 
 	port=$commandParamOne
 
-	if [[ `screen -ls | grep -e LSP-$languageName -e $commandParamOne` ]]; then 
-		screen -ls | grep -e LSP-$languageName -e $commandParamOne | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
+	if [[ `screen -ls | grep -e $commandParamOne` ]]; then 
+		screen -ls | grep -e $commandParamOne | cut -d. -f1 | awk '{print $1}' | xargs kill -9;
 		screen -wipe
 	fi
 ## --- if killAll is specified, kill all LSP instances
