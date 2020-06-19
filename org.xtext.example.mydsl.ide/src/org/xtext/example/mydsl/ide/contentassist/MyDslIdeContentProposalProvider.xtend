@@ -46,18 +46,18 @@ Because:
 		if (alternativesRule == ruleCall.rule && context.currentModel !== null) {
 			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
 ${1:alternatives}
-${2:"Write your 2nd alternative here"}''', "Considered alternatives: 2 -- Compact", context), 0)
+${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context), 0)
 			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
 "Write your 1st alternative here"
 "Write your 2nd alternative here"
-"Write your 3rd alternative here"''', "Considered alternatives: 3 -- Compact", context), 0)
+"Write your 3rd alternative here"''', "Provide 3 alternatives", context), 0)
 		}
 
 		// Summary		
 		if (summaryRule == ruleCall.rule && context.currentModel !== null) {
 			acceptor.accept(
 				proposalCreator.createSnippet('''Summary: 
-"Write your summary here"''', "Next step: Provide a summary", context),
+"Write your summary here"''', "Provide a summary", context),
 				0)
 		}
 
@@ -65,7 +65,7 @@ ${2:"Write your 2nd alternative here"}''', "Considered alternatives: 2 -- Compac
 		if (userStoryRule == ruleCall.rule && context.currentModel !== null) {
 			acceptor.accept(
 				proposalCreator.createSnippet('''User story: 
-"Ticket-123"''', "Next step: Provide a ticket ID", context), 0)
+"Ticket-123"''', "Provide a ticket ID", context), 0)
 		}
 
 		// Title
@@ -73,15 +73,15 @@ ${2:"Write your 2nd alternative here"}''', "Considered alternatives: 2 -- Compac
 			acceptor.accept(
 				proposalCreator.createSnippet('''Title: 
 "How do we solve the problem XYZ?"''',
-					"Next step: Provide a title", context), 0)
+					"Provide a title", context), 0)
 		}
 
 		// outcome
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__SELECTED)
-			acceptor.accept(proposalCreator.createSnippet('''We chose alternative:
+			acceptor.accept(proposalCreator.createSnippet('''We chose:
 «scope.allElements.map[name.toString]»» 
-''', "Next step: Specify your selected alternative", context), 0)
+''', "Specify your selected alternative", context), 0)
 		}
 
 //		// chosenAlternative
@@ -96,7 +96,7 @@ ${2:"Write your 2nd alternative here"}''', "Considered alternatives: 2 -- Compac
 			acceptor.accept(
 				proposalCreator.createSnippet('''Because: 
 "HERE COMES YOUR RATIONALE"''',
-					"Next step: Provide rationale", context), 0)
+					"Provide rationale", context), 0)
 //			}
 		}
 
@@ -104,7 +104,7 @@ ${2:"Write your 2nd alternative here"}''', "Considered alternatives: 2 -- Compac
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__BECAUSE)
 			if (scope.allElements !== null) {
 				acceptor.accept(
-					proposalCreator.createSnippet('''"HERE COMES YOUR RATIONALE"''', "Next step: Provide rationale",
+					proposalCreator.createSnippet('''"HERE COMES YOUR RATIONALE"''', "Provide rationale",
 						context), 0)
 			}
 		}
