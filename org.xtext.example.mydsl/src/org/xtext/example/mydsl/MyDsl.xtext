@@ -30,7 +30,7 @@ Alternatives:
 	alternatives+=(Alternative)+;
 
 Alternative:
-	name=STRING;
+	id=ID name=STRING;
 
 Outcome:
 	'We' 'chose' 'alternative:'
@@ -42,7 +42,7 @@ Because:
 ;
 
 ChosenAlternative:
-	selection=[Alternative|STRING];
+	selection=[Alternative|ID];
 
 Rationale:
 	name=STRING;

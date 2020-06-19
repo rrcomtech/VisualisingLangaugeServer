@@ -31,12 +31,12 @@ Summary:
 "Write your summary here"
 				
 Considered alternatives: 
-"Write your 1st alternative here"
-"Write your 2nd alternative here"
-"Write your 3rd alternative here"
+Alt-1 "Write your 1st alternative here"
+Alt-2 "Write your 2nd alternative here"
+Alt-3 "Write your 3rd alternative here"
 				
-We chose alternative: 
-"Write your 1st alternative here"
+We chose: 
+Alt-3
 
 Because: 
 "HERE COMES YOUR RATIONALE"''', "Complete Template", context), 0)
@@ -47,14 +47,21 @@ Because:
 //			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
 //${1:alternatives}
 //${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context), 0)
-						acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
-"Write your 1st alternative here"
-"Write your 2nd alternative here"''', "Provide 2 alternatives", context), 0)
 			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
-"Write your 1st alternative here"
-"Write your 2nd alternative here"
-"Write your 3rd alternative here"''', "Provide 3 alternatives", context), 0)
+Alt-1 "Write your 1st alternative here"
+Alt-2 "Write your 2nd alternative here"''', "Provide 2 alternatives", context), 0)
+			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
+Alt-1 "Write your 1st alternative here"
+Alt-2 "Write your 2nd alternative here"
+Alt-3 "Write your 3rd alternative here"''', "Provide 3 alternatives", context), 0)
 		}
+
+		// Considered Alternatives
+		if (alternativeRule == ruleCall.rule && context.currentModel !== null) {
+			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.ALTERNATIVES__ALTERNATIVES)
+			acceptor.accept(proposalCreator.createSnippet('''Alt-«scope.allElements.size+1» "Write your next alternative here"''', "Provide another alternative", context), 0)
+		}
+
 
 		// Summary		
 		if (summaryRule == ruleCall.rule && context.currentModel !== null) {
@@ -83,8 +90,7 @@ Because:
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__SELECTED)
 			acceptor.accept(proposalCreator.createSnippet('''We chose:
-"«scope.allElements.map[name.toString]»" 
-''', "Specify your selected alternative", context), 0)
+"«scope.allElements.map[name.toString]»"''', "Specify your selected alternative", context), 0)
 		}
 
 //		// chosenAlternative
