@@ -14,16 +14,20 @@ DecisionRecord:
 	outcome=Outcome;
 
 Title:
-	'Title:' name=STRING;
+	'Title:' 
+	name=STRING;
 
 UserStory:
-	'User' 'story:' ticket=STRING;
+	'User' 'story:' 
+	ticket=STRING;
 
 Summary:
-	'Summary:' summary=STRING;
+	'Summary:' 
+	summary=STRING;
 
 Alternatives:
-	'Considered' 'alternatives:' alternatives+=(Alternative)+;
+	'Considered' 'alternatives:'
+	alternatives+=(Alternative)+;
 
 Alternative:
 	name=STRING;
@@ -34,7 +38,7 @@ Outcome:
 	because=Because rationale=Rationale;
 
 Because:
-	name='because:'
+	name='Because:'
 ;
 
 ChosenAlternative:
