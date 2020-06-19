@@ -31,12 +31,12 @@ Summary:
 "Write your summary here"
 				
 Considered alternatives: 
-Alt-1 "Write your 1st alternative here"
-Alt-2 "Write your 2nd alternative here"
-Alt-3 "Write your 3rd alternative here"
+ALT_N1 "Write your 1st alternative here"
+ALT_N2 "Write your 2nd alternative here"
+ALT_N3 "Write your 3rd alternative here"
 				
 We chose: 
-Alt-3
+ALT_N3
 
 Because: 
 "HERE COMES YOUR RATIONALE"''', "Complete Template", context), 0)
@@ -48,18 +48,18 @@ Because:
 //${1:alternatives}
 //${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context), 0)
 			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
-Alt-1 "Write your 1st alternative here"
-Alt-2 "Write your 2nd alternative here"''', "Provide 2 alternatives", context), 0)
+ALT_N1: "Write your 1st alternative here"
+ALT_N2: "Write your 2nd alternative here"''', "Provide 2 alternatives", context), 0)
 			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
-Alt-1 "Write your 1st alternative here"
-Alt-2 "Write your 2nd alternative here"
-Alt-3 "Write your 3rd alternative here"''', "Provide 3 alternatives", context), 0)
+ALT_N1: "Write your 1st alternative here"
+ALT_N2: "Write your 2nd alternative here"
+ALT_N3: "Write your 3rd alternative here"''', "Provide 3 alternatives", context), 0)
 		}
 
 		// Considered Alternatives
 		if (alternativeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.ALTERNATIVES__ALTERNATIVES)
-			acceptor.accept(proposalCreator.createSnippet('''Alt-«scope.allElements.size+1» "Write your next alternative here"''', "Provide another alternative", context), 0)
+			acceptor.accept(proposalCreator.createSnippet('''ALT_N«scope.allElements.size+1» "Write your next alternative here"''', "Provide another alternative", context), 0)
 		}
 
 

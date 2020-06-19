@@ -30,10 +30,10 @@ Alternatives:
 	alternatives+=(Alternative)+;
 
 Alternative:
-	id=ID name=STRING;
+	id=ID':' name=STRING;
 
 Outcome:
-	'We' 'chose' 'alternative:'
+	'We' 'chose'
 	selected=ChosenAlternative
 	because=Because rationale=Rationale;
 
