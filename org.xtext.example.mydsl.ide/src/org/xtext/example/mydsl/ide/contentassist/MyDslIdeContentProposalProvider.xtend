@@ -80,7 +80,7 @@ ${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context)
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__SELECTED)
 			acceptor.accept(proposalCreator.createSnippet('''We chose:
-«scope.allElements.map[name.toString]»» 
+"«scope.allElements.map[name.toString]»»" 
 ''', "Specify your selected alternative", context), 0)
 		}
 
