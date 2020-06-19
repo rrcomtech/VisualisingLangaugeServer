@@ -44,9 +44,12 @@ Because:
 
 		// Considered Alternatives
 		if (alternativesRule == ruleCall.rule && context.currentModel !== null) {
-			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
-${1:alternatives}
-${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context), 0)
+//			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
+//${1:alternatives}
+//${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context), 0)
+						acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
+"Write your 1st alternative here"
+"Write your 2nd alternative here"''', "Provide 2 alternatives", context), 0)
 			acceptor.accept(proposalCreator.createSnippet('''Considered alternatives: 
 "Write your 1st alternative here"
 "Write your 2nd alternative here"
@@ -80,7 +83,7 @@ ${2:"Write your 2nd alternative here"}''', "Provide a 2nd alternative", context)
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__SELECTED)
 			acceptor.accept(proposalCreator.createSnippet('''We chose:
-"«scope.allElements.map[name.toString]»»" 
+"«scope.allElements.map[name.toString]»" 
 ''', "Specify your selected alternative", context), 0)
 		}
 
