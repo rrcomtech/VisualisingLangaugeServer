@@ -31,9 +31,9 @@ Summary:
 "Write your summary here"
 				
 Considered alternatives: 
-ALT_N1 "Write your 1st alternative here"
-ALT_N2 "Write your 2nd alternative here"
-ALT_N3 "Write your 3rd alternative here"
+ALT_N1: "Write your 1st alternative here"
+ALT_N2: "Write your 2nd alternative here"
+ALT_N3: "Write your 3rd alternative here"
 				
 We chose: 
 ALT_N3

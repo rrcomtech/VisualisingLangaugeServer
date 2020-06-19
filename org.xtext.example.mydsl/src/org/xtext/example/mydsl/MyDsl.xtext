@@ -33,7 +33,7 @@ Alternative:
 	id=ID':' name=STRING;
 
 Outcome:
-	'We' 'chose'
+	'We' 'chose:'
 	selected=ChosenAlternative
 	because=Because rationale=Rationale;
 
@@ -42,7 +42,7 @@ Because:
 ;
 
 ChosenAlternative:
-	selection=[Alternative|ID];
+	selection=[Alternative];
 
 Rationale:
 	name=STRING;
