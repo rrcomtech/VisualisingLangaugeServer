@@ -88,16 +88,10 @@ ALT_N3: "Write your 3rd alternative here"''', "Provide 3 alternatives", context)
 
 		// outcome
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
-			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__SELECTED)
+			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.ALTERNATIVES__ALTERNATIVES)
 			acceptor.accept(proposalCreator.createSnippet('''We chose:
-"«scope.allElements.map[name.toString]»"''', "Specify your selected alternative", context), 0)
+"«scope.allElements.get(0).getUserData("AlternativeID")»"''', "Chosen alternative template -- Compact", context), 0)
 		}
-
-//		// chosenAlternative
-//		if (chosenAlternativeRule == ruleCall.rule && context.currentModel !== null) {
-//			acceptor.accept(proposalCreator.createSnippet('''""''', "Chosen alternative template -- Compact", context),
-//				0)
-//		}
 
 		if (becauseRule == ruleCall.rule && context.currentModel !== null) {
 //			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.OUTCOME__BECAUSE)
