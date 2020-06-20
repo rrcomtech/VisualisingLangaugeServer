@@ -99,7 +99,7 @@ Number_3: "Write your 3rd alternative here"''', "Provide 3 alternatives", contex
 			acceptor.accept(
 				proposalCreator.createSnippet('''Because: 
 "HERE COMES YOUR RATIONALE"''',
-					"Because:", context), 0)
+					"Provide rationale", context), 0)
 //			}
 		}
 
