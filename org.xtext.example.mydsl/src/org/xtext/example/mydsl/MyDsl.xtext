@@ -33,7 +33,7 @@ Alternative:
 	altID=AlternativeID':' name=STRING;
 
 AlternativeID:
-	id=ID;
+	name=ID;
 
 Outcome:
 	'We' 'chose:'
