@@ -59,7 +59,7 @@ ALT_N3: "Write your 3rd alternative here"''', "Provide 3 alternatives", context)
 		// Considered Alternatives
 		if (alternativeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.ALTERNATIVES__ALTERNATIVES)
-			acceptor.accept(proposalCreator.createSnippet('''ALT_N«scope.allElements.size+1» "Write your next alternative here"''', "Provide another alternative", context), 0)
+			acceptor.accept(proposalCreator.createSnippet('''ALT_N«scope.allElements.size+1»: "Write your next alternative here"''', "Provide another alternative", context), 0)
 		}
 
 
@@ -90,7 +90,7 @@ ALT_N3: "Write your 3rd alternative here"''', "Provide 3 alternatives", context)
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.ALTERNATIVES__ALTERNATIVES)
 			acceptor.accept(proposalCreator.createSnippet('''We chose:
-"«scope.allElements.get(0).getUserData("AlternativeID")»"''', "Chosen alternative template -- Compact", context), 0)
+"«scope.allElements.get(0).getUserData("AlternativeID")»"''', "Choose an alternative resolving the issue", context), 0)
 		}
 
 		if (becauseRule == ruleCall.rule && context.currentModel !== null) {

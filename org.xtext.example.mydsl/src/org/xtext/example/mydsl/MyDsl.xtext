@@ -30,7 +30,7 @@ Alternatives:
 	alternatives+=(Alternative)+;
 
 Alternative:
-	AlternativeID':' name=STRING;
+	altID=AlternativeID':' name=STRING;
 
 AlternativeID:
 	id=ID;
