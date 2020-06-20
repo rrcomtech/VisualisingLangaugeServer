@@ -90,7 +90,7 @@ Number_3: "Write your 3rd alternative here"''', "Provide 3 alternatives", contex
 		if (outcomeRule == ruleCall.rule && context.currentModel !== null) {
 			val scope = scopeProvider.getScope(context.currentModel, MyDslPackage.Literals.ALTERNATIVES__ALTERNATIVES)
 			acceptor.accept(proposalCreator.createSnippet('''We chose:
-"«scope.allElements.get(0).name»"''', "Choose an alternative resolving the issue", context), 0)
+«scope.allElements.get(0).name»''', "Choose an alternative resolving the issue", context), 0)
 		}
 
 		if (becauseRule == ruleCall.rule && context.currentModel !== null) {
@@ -99,7 +99,7 @@ Number_3: "Write your 3rd alternative here"''', "Provide 3 alternatives", contex
 			acceptor.accept(
 				proposalCreator.createSnippet('''Because: 
 "HERE COMES YOUR RATIONALE"''',
-					"Provide rationale", context), 0)
+					"Because:", context), 0)
 //			}
 		}
 
