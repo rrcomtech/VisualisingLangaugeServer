@@ -23,16 +23,16 @@ class MyDslGenerator extends AbstractGenerator {
 		val decisionRecord = model.records.head as DecisionRecord;
 		val fileName = resource.URI.trimFileExtension.lastSegment
 
-		fsa.generateFile(fileName + ".java", '''
-			public class «fileName» {
-			    
-			    public static void main(String[] args) {
-
-			    }
-			    
-			}
-		''')
-
+//		fsa.generateFile(fileName + ".java", '''
+//			public class «fileName» {
+//			    
+//			    public static void main(String[] args) {
+//
+//			    }
+//			    
+//			}
+//		''')
+//
 		fsa.generateFile(fileName + ".md", '''
 			# «model.records.head.title.name» 
 			    
@@ -49,11 +49,11 @@ class MyDslGenerator extends AbstractGenerator {
 			## Decision Outcome
 
 			* **Chosen Alternative:** «decisionRecord.outcome.selected.selection.value»
-			* **Reason:** «decisionRecord.outcome.because.name»
+			* **Reason:** «decisionRecord.outcome.rationale.name»
 		''')	
 		
 		fsa.generateFile(fileName + ".tex", '''
-			# % ==================================================================================
+			% ==================================================================================
 			% ==================================================================================
 			%
 			%                           «model.records.head.title.name»
@@ -343,13 +343,13 @@ class MyDslGenerator extends AbstractGenerator {
 			\section*{User Story}
 			
 			\begin{itemize}
-				«decisionRecord.userStory.ticket»
+				\item «decisionRecord.userStory.ticket»
 			\end{itemize}
 			
 			\section*{Summary}
 			
 			\begin{itemize}
-				«decisionRecord.summary.summary»
+				\item «decisionRecord.summary.summary»
 			\end{itemize}
 			
 			\section*{Considered Alterantives}
@@ -365,13 +365,13 @@ class MyDslGenerator extends AbstractGenerator {
 			\subsubsection*{Chosen Alternative}
 			
 			\begin{itemize}
-				«decisionRecord.outcome.selected.selection.value»
+				\item «decisionRecord.outcome.selected.selection.value»
 			\end{itemize}
 			
 			\subsubsection*{Reason}
 
 			\begin{itemize}
-				«decisionRecord.outcome.because.name»
+				\item «decisionRecord.outcome.rationale.name»
 			\end{itemize}
 			
 			%
