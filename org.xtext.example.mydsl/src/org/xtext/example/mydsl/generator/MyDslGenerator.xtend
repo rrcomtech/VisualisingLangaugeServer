@@ -4,9 +4,11 @@
 package org.xtext.example.mydsl.generator
 
 import org.eclipse.emf.ecore.resource.Resource
+import org.xtext.example.mydsl.myDsl.Model
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import org.xtext.example.mydsl.myDsl.DecisionRecord
 
 /**
  * Generates code from your model files on save.
@@ -16,7 +18,11 @@ import org.eclipse.xtext.generator.IGeneratorContext
 class MyDslGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		
+		val model = resource.contents.head as Model;
+		val decisionRecord = model.records.head as DecisionRecord;
 		val fileName = resource.URI.trimFileExtension.lastSegment
+
 		fsa.generateFile(fileName + ".java", '''
 			public class «fileName» {
 			    
@@ -26,6 +32,27 @@ class MyDslGenerator extends AbstractGenerator {
 			    
 			}
 		''')
+
+		fsa.generateFile(fileName + ".md", '''
+			# «model.records.head.title» 
+			    
+			**User story:** «decisionRecord.userStory»
+			
+			«decisionRecord.summary»
+
+			## Considered Alterantives
+			
+			«FOR alt : decisionRecord.consideredAlteratives.alternatives»
+				* «alt.name»
+				
+			«ENDFOR»
+			
+		''')
+		
+//		«FOR c : model.types.filter[!members.filter(Operation).empty]»
+//					
+//					«generateImpl(c)»
+//				«ENDFOR»
 
 	}
 }
