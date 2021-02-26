@@ -34,20 +34,24 @@ class MyDslGenerator extends AbstractGenerator {
 		''')
 
 		fsa.generateFile(fileName + ".md", '''
-			# «model.records.head.title» 
+			# «model.records.head.title.name» 
 			    
-			**User story:** «decisionRecord.userStory»
+			**User story:** «decisionRecord.userStory.ticket»
 			
-			«decisionRecord.summary»
+			«decisionRecord.summary.summary»
 
 			## Considered Alterantives
 			
 			«FOR alt : decisionRecord.consideredAlteratives.alternatives»
-				* «alt.name»
-				
+				* «alt.value»
 			«ENDFOR»
-			
+
+			## Decision Outcome
+
+			* **Chosen Alternative:** «decisionRecord.outcome.selected.selection.value»
+			* **Reason:** «decisionRecord.outcome.because.name»
 		''')
+		
 		
 //		«FOR c : model.types.filter[!members.filter(Operation).empty]»
 //					
