@@ -25,6 +25,9 @@ apply plugin: 'net.researchgate.release'
 configure(subprojects.findAll { it.name.startsWith('org.xtext.') }) {
 
 	ext.xtextVersion = '2.16.0'
+	ext.sprottyVersion = '0.7.0'
+	ext.elkVersion = '0.6.1'
+
 	repositories {
 		maven {
 			url 'https://oss.sonatype.org/content/repositories/snapshots'
