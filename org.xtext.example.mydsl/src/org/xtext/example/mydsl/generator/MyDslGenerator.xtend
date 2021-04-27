@@ -34,37 +34,37 @@ class MyDslGenerator extends AbstractGenerator {
 //		''')
 //
 		fsa.generateFile(fileName + ".md", '''
-			# «model.records.head.title.name» 
-			    
-			**User story:** «decisionRecord.userStory.ticket»
-			
-			«decisionRecord.summary.summary»
+			# «model.records.head.title.label»
+
+			**User story:** «decisionRecord.userStory.label»
+
+			«decisionRecord.summary.label»
 
 			## Considered Alterantives
-			
+
 			«FOR alt : decisionRecord.consideredAlteratives.alternatives»
-				* «alt.value»
+				* «alt.label»
 			«ENDFOR»
 
 			## Decision Outcome
 
-			* **Chosen Alternative:** «decisionRecord.outcome.selected.selection.value»
+			* **Chosen Alternative:** «decisionRecord.outcome.selected.selection.label»
 			* **Reason:** «decisionRecord.outcome.rationale.name»
-		''')	
-		
+		''')
+
 		fsa.generateFile(fileName + ".tex", '''
 			% ==================================================================================
 			% ==================================================================================
 			%
-			%                           «model.records.head.title.name»
+			%                           «model.records.head.title.label»
 			%
 			% ==================================================================================
 			% ==================================================================================
 			%
 			% Titel des Projektes
-			\newcommand{\topic}{«model.records.head.title.name»}
+			\newcommand{\topic}{«model.records.head.title.label»}
 			% include header (for an constitant document layout)
-			
+
 			% ==================================================================================
 			% ==================================================================================
 			%
@@ -90,7 +90,7 @@ class MyDslGenerator extends AbstractGenerator {
 			\newcommand{\authMail}[0]{\textbf{\href{mailto:M.Schubanz@b-tu.de}{M.Schubanz@b-tu.de} }}
 			%
 			% ==================================================================================
-			% KLASSEN UND PAKET DEKLARATION 
+			% KLASSEN UND PAKET DEKLARATION
 			% ==================================================================================
 			%
 			% ----------------------------------------------------------------------------------
@@ -108,19 +108,19 @@ class MyDslGenerator extends AbstractGenerator {
 			%\usepackage[latin1]{inputenc}		% fuer Unix und ANSI Kodierung
 			\usepackage[T1]{fontenc}			% T1 Fonts fÃ¼r die Schrift Enkodierung
 			%
-			% [UTF8] is "supported" by the LaTeX team and covers a fairly specific/limited 
-			% range of unicode input characters. It only defines those symbols that are known 
+			% [UTF8] is "supported" by the LaTeX team and covers a fairly specific/limited
+			% range of unicode input characters. It only defines those symbols that are known
 			% to be available with the current font encoding.
 			%
-			% [UTF8x], AFAIK, is no longer supported, but covers a much broader range of input 
+			% [UTF8x], AFAIK, is no longer supported, but covers a much broader range of input
 			% symbols. I would recommend only trying it if [UTF8] doesn't do what you need.
 			%
-			% Secondly, the listings package (and most other related packages that do character 
-			% scanning) does not support UTF8 input. The listingsutf8 package provides a 
+			% Secondly, the listings package (and most other related packages that do character
+			% scanning) does not support UTF8 input. The listingsutf8 package provides a
 			% UTF8-compatible replacement for \lstinputlisting but not for the main \lstlisting
 			% environment. Using XeLaTeX might help you here, however.
 			%
-			% More infos about Internationalization in LaTex: 
+			% More infos about Internationalization in LaTex:
 			% http://en.wikibooks.org/wiki/LaTeX/Internationalization
 			%
 			\usepackage[babel,german=quotes]{csquotes}
@@ -165,7 +165,7 @@ class MyDslGenerator extends AbstractGenerator {
 			\usepackage{comment}	% Unterstützung für verschiedene Versionen
 			\usepackage{moreverb}	% Unterstützung von nummerierten Listungs
 			\usepackage{listings}	% erweiterte Unterstützung für Quellcode Einbindung
-			\usepackage{float}     % Option H für Figure Umgebung, Platzierung genau 
+			\usepackage{float}     % Option H für Figure Umgebung, Platzierung genau
 			                          % an der Stelle
 			\usepackage{enumerate}	% mehr Optionen für Enumerate Umgebungen
 			\usepackage{enumitem}   % Stil von Aufzählungen anpassbar machen
@@ -177,7 +177,7 @@ class MyDslGenerator extends AbstractGenerator {
 			\usepackage{scrlayer-scrpage} 	% Umdefinieren von Headern und Footern für KOMA Skript
 			%\usepackage{svg} 		% Das Laden von SVG Grafiken ermöglichen
 			% Möglichst als letztes Paket laden
-			%\usepackage{todonotes}  % Unterstützung von todo-Elementen 
+			%\usepackage{todonotes}  % Unterstützung von todo-Elementen
 			%
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,7 +214,7 @@ class MyDslGenerator extends AbstractGenerator {
 			        breaklines=true,                % Zeilen umbrechen wenn notwendig.
 			        breakautoindent=true,           % Nach dem Zeilenumbruch Zeile einr<FC>cken.
 			        postbreak=\space,               % Bei Leerzeichen umbrechen.
-			        tabsize=3,                      % Tabulatorgroesse 
+			        tabsize=3,                      % Tabulatorgroesse
 			        numbersep=20pt,
 			    basicstyle=\small\fontfamily{cmtt},     % Nichtproportionale Schrift, klein f<FC>r den Quellcode
 			        showspaces=false,               % Leerzeichen nicht anzeigen.
@@ -242,7 +242,7 @@ class MyDslGenerator extends AbstractGenerator {
 			%
 			%
 			% ==================================================================================
-			% UMGEBUNG 
+			% UMGEBUNG
 			% ==================================================================================
 			%
 			% Text-Formatierungen als neue, einfachere Kommandos
@@ -275,17 +275,17 @@ class MyDslGenerator extends AbstractGenerator {
 			        \setlength{\topsep}{0pt}
 			        \setlength{\parskip}{0pt}
 			        \setlength{\partopsep}{0pt}
-			        \setlength{\parsep}{0pt}         
-			        %\setlength{\itemsep}{0pt} 
+			        \setlength{\parsep}{0pt}
+			        %\setlength{\itemsep}{0pt}
 			}
 			{
-			    \end{list} 
+			    \end{list}
 			}
-			
+
 			\setlength{\parskip}{2pt}
 			\setlength{\partopsep}{1pt}
-			\setlength{\parsep}{1pt}         
-			
+			\setlength{\parsep}{1pt}
+
 			\usepackage[tmargin=80pt, lmargin=80pt, tmargin=95pt, headsep=3.5em]{geometry}
 			% Umgebung fuer Loesungen zu Kontrollfragen
 			% Achtung: \begin{loesung} muss unbedingt am Anfang der Zeile stehen!
@@ -325,13 +325,13 @@ class MyDslGenerator extends AbstractGenerator {
 			    \rule{.925\textwidth}{0.25pt}\\[0.6cm]
 			\end{center}
 			}
-			
+
 			%\input{../Header.tex}
 			%\input{solutions.tex}
 			%
 			%
 			% ==================================================================================
-			% DOKUMENT-BEGINN 
+			% DOKUMENT-BEGINN
 			% ==================================================================================
 			%
 			\begin{document}
@@ -339,33 +339,33 @@ class MyDslGenerator extends AbstractGenerator {
 			% standard document begin (headline etc)
 			\intro
 			%
-			
+
 			\section*{User Story}
-			
+
 			\begin{itemize}
-				\item «decisionRecord.userStory.ticket»
+				\item «decisionRecord.userStory.label»
 			\end{itemize}
-			
+
 			\section*{Summary}
-			
+
 			\begin{itemize}
-				\item «decisionRecord.summary.summary»
+				\item «decisionRecord.summary.label»
 			\end{itemize}
-			
+
 			\section*{Considered Alterantives}
-			
+
 			\begin{enumerate}
 				«FOR alt : decisionRecord.consideredAlteratives.alternatives»
-					\item «alt.value»
+					\item «alt.label»
 				«ENDFOR»
-			\end{enumerate}			
+			\end{enumerate}
 
 			\section*{Decision Outcome}
-			
+
 			\subsubsection*{Chosen Alternative}
-			
+
 			\begin{itemize}
-				\item «decisionRecord.outcome.selected.selection.value»
+				\item «decisionRecord.outcome.selected.selection.label»
 			\end{itemize}
 			
 			\subsubsection*{Reason}

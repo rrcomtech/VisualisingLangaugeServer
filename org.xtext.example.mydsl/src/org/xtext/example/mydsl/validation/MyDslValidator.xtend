@@ -33,9 +33,9 @@ class MyDslValidator extends AbstractMyDslValidator {
 	
 	@Check
 	def checkTitleStartsWithCaptial(Title title) {
-		if (!Character.isUpperCase(title.name.charAt(0))) {
-			warning('Name should start with a capital', 
-					MyDslPackage.Literals.TITLE__NAME,
+		if (!Character.isUpperCase(title.label.charAt(0))) {
+			warning('Name should start with a capital',
+					MyDslPackage.Literals.TITLE__LABEL,
 					INVALID_NAME)
 		}
 	}

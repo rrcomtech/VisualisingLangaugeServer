@@ -15,22 +15,22 @@ DecisionRecord:
 
 Title:
 	'Title:' 
-	name=STRING;
+	label=STRING;
 
 UserStory:
-	'User' 'story:' 
-	ticket=STRING;
+	'User' 'story:'
+	label=STRING;
 
 Summary:
-	'Summary:' 
-	summary=STRING;
+	'Summary:'
+	label=STRING;
 
 Alternatives:
-	'Considered' 'alternatives:'
+	label='Considered alternatives:'
 	alternatives+=(Alternative)+;
 
 Alternative:
-	name=ID':' value=STRING;
+	name=ID':' label=STRING;
 
 //AlternativeID:
 //	name=ID;
@@ -52,4 +52,8 @@ Rationale:
 
 	//terminal L_O_NG_STRING returns ecore::EString: //custom terminal SurveyString
 	//	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '?' | '!' | '@' | '#' | '%' | '^' | '&' | '(' | ')' | '0'..'9' | ' ')*;
+
+
+
+
 	 
