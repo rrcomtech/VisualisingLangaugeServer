@@ -74,13 +74,27 @@ class DiagramGenerator implements IDiagramGenerator {
 						
 		// Create Node for currect object 
 		val label = getLabel(obj)
-		val node = new StructuralElement(label, binding.structuralClass.toString(), context)
-		diagramElements.add(node)
 		
-		// If relationship binding is set, connect to parent element.
-		if (binding.connectionClass !== null) {
-			diagramElements.add(new ConnectionElement("", binding.connectionClass.toString(), obj, context, parent, node.port))
-		}		
+		var StructuralElement node;		
+		GraphicalServerLauncher.log.log("Class: " + label.class.simpleName)
+		if (label instanceof String) {
+			GraphicalServerLauncher.log.log("Label is String")
+			node = new StructuralElement(label, binding.structuralClass.toString(), context)
+			diagramElements.add(node)
+			
+			// If relationship binding is set, connect to parent element.
+			if (binding.connectionClass !== null) {
+				diagramElements.add(new ConnectionElement("", binding.connectionClass.toString(), obj, context, parent, node.port))
+			}
+		} else {
+			GraphicalServerLauncher.log.log("Label is not String")
+			if (label !== null) {
+				if (label instanceof EObject) {
+					GraphicalServerLauncher.log.log("Label is EObject")
+					diagramElements.addAll(translateAstToDiagram(label, context, parent))
+				}
+			}
+		}
 		
 		for (child : children) {
 			// The current object becomes the parent object.
@@ -104,11 +118,11 @@ class DiagramGenerator implements IDiagramGenerator {
 	}
 	
 	/**
-	 * Searches for the label value of a given EObject. If not found, returns empty String.
+	 * Searches for the label value of a given EObject. If not found, returns null.
 	 */
-	def String getLabel(EObject obj) {
+	def Object getLabel(EObject obj) {
 		try {
-			return AttributeManager.getProperty(obj, this.LABEL_ATTRIBUTE_NAME) as String;			
+			return AttributeManager.getProperty(obj, this.LABEL_ATTRIBUTE_NAME);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			// A label could not be retrieved.

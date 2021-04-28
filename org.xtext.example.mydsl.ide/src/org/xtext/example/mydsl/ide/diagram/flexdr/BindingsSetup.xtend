@@ -19,7 +19,11 @@ class BindingsSetup {
 			new Binding(UserStoryImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),
 			new Binding(SummaryImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),
 			new Binding(AlternativesImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),
-			new Binding(AlternativeImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP)
+			new Binding(AlternativeImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),
+			new Binding(OutcomeImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),
+			new Binding(BecauseImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),	
+			new Binding(ChosenAlternativeImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP),
+			new Binding(RationaleImpl.simpleName, MetaModelClass.STATEMENT, MetaModelClass.ARGUMENTATIVE_RELATIONSHIP)
 			
 		)
 		

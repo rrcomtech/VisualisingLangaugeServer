@@ -20,7 +20,8 @@ class MyDslGenerator extends AbstractGenerator {
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		
 		val model = resource.contents.head as Model;
-		val decisionRecord = model.records.head as DecisionRecord;
+		// @type DecisionRecord
+		val decisionRecord = model.records.head;
 		val fileName = resource.URI.trimFileExtension.lastSegment
 
 //		fsa.generateFile(fileName + ".java", '''
@@ -48,8 +49,8 @@ class MyDslGenerator extends AbstractGenerator {
 
 			## Decision Outcome
 
-			* **Chosen Alternative:** «decisionRecord.outcome.selected.selection.label»
-			* **Reason:** «decisionRecord.outcome.rationale.name»
+			* **Chosen Alternative:** «decisionRecord.outcome.selected.label.label»
+			* **Reason:** «decisionRecord.outcome.rationale.label»
 		''')
 
 		fsa.generateFile(fileName + ".tex", '''
@@ -365,13 +366,13 @@ class MyDslGenerator extends AbstractGenerator {
 			\subsubsection*{Chosen Alternative}
 
 			\begin{itemize}
-				\item «decisionRecord.outcome.selected.selection.label»
+				\item «decisionRecord.outcome.selected.label.label»
 			\end{itemize}
 			
 			\subsubsection*{Reason}
 
 			\begin{itemize}
-				\item «decisionRecord.outcome.rationale.name»
+				\item «decisionRecord.outcome.rationale.label»
 			\end{itemize}
 			
 			%

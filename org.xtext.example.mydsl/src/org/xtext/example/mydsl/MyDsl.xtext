@@ -36,19 +36,19 @@ Alternative:
 //	name=ID;
 
 Outcome:
-	'We' 'chose:'
+	label=('We chose:')
 	selected=ChosenAlternative
 	because=Because rationale=Rationale;
 
 Because:
-	name='Because:'
+	label='Because:'
 ;
 
 ChosenAlternative:
-	selection=[Alternative];
+	label=[Alternative];
 
 Rationale:
-	name=STRING;
+	label=STRING;
 
 	//terminal L_O_NG_STRING returns ecore::EString: //custom terminal SurveyString
 	//	('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '?' | '!' | '@' | '#' | '%' | '^' | '&' | '(' | ')' | '0'..'9' | ' ')*;
