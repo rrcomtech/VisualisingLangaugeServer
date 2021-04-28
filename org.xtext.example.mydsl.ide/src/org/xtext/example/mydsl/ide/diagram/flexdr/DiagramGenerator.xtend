@@ -76,9 +76,7 @@ class DiagramGenerator implements IDiagramGenerator {
 		val label = getLabel(obj)
 		
 		var StructuralElement node;		
-		GraphicalServerLauncher.log.log("Class: " + label.class.simpleName)
 		if (label instanceof String) {
-			GraphicalServerLauncher.log.log("Label is String")
 			node = new StructuralElement(label, binding.structuralClass.toString(), context)
 			diagramElements.add(node)
 			
@@ -87,10 +85,8 @@ class DiagramGenerator implements IDiagramGenerator {
 				diagramElements.add(new ConnectionElement("", binding.connectionClass.toString(), obj, context, parent, node.port))
 			}
 		} else {
-			GraphicalServerLauncher.log.log("Label is not String")
 			if (label !== null) {
 				if (label instanceof EObject) {
-					GraphicalServerLauncher.log.log("Label is EObject")
 					diagramElements.addAll(translateAstToDiagram(label, context, parent))
 				}
 			}
