@@ -16,11 +16,19 @@ import org.xtext.example.mydsl.ide.diagram.flexdr.elements.ConnectionElement
 import org.eclipse.sprotty.SPort
 import org.eclipse.emf.common.util.EList
 import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher
+import org.eclipse.sprotty.xtext.tracing.ITraceProvider
+import com.google.inject.Inject
+import org.eclipse.sprotty.xtext.SIssueMarkerDecorator
+import org.eclipse.emf.ecore.EStructuralFeature
 
 class DiagramGenerator implements IDiagramGenerator {
+	
+	@Inject extension ITraceProvider
+	@Inject extension SIssueMarkerDecorator
+	
 
-	private String LABEL_ATTRIBUTE_NAME = "label";
-	private List<Binding> bindings;
+	String LABEL_ATTRIBUTE_NAME = "label";
+	List<Binding> bindings;
 	
 	new() {
 		// Get bindings set up by user.
@@ -36,7 +44,7 @@ class DiagramGenerator implements IDiagramGenerator {
 		var model = context.resource.contents.head
 				
 		var graph = new SGraph()
-		var root = new StructuralElement("Issue", "node", context)
+		var root = new StructuralElement("Issue", "node", context, null, this)
 		
 		var children = new ArrayList<SModelElement>()
 		children.add(root)
@@ -55,7 +63,7 @@ class DiagramGenerator implements IDiagramGenerator {
 	 * 
 	 */
 	def List<SModelElement> translateAstToDiagram(EObject obj, Context context, SModelElement parent) {
-				
+			
 		// Look up the binding.
 		val binding = this.findBinding(obj)
 		
@@ -64,25 +72,25 @@ class DiagramGenerator implements IDiagramGenerator {
 		val diagramElements = new ArrayList<SModelElement>()
 		
 		// Test if representation is desired.
-		if (binding === null) {
+		if (binding === null) {			
 			// Recursively finds representations for child elements.
 			for (child : children) {
 				diagramElements.addAll(translateAstToDiagram(child, context, parent))
 			}
 			return diagramElements
-		} 
+		}
 						
 		// Create Node for currect object 
 		val label = getLabel(obj)
 		
 		var StructuralElement node;		
 		if (label instanceof String) {
-			node = new StructuralElement(label, binding.structuralClass.toString(), context)
+			node = new StructuralElement(label, binding.structuralClass.toString(), context, obj, this)
 			diagramElements.add(node)
 			
 			// If relationship binding is set, connect to parent element.
 			if (binding.connectionClass !== null) {
-				diagramElements.add(new ConnectionElement("", binding.connectionClass.toString(), obj, context, parent, node.port))
+				diagramElements.add(new ConnectionElement("", binding.connectionClass.toString(), obj, context, parent, node.port, this))
 			}
 		} else {
 			if (label !== null) {
@@ -125,5 +133,18 @@ class DiagramGenerator implements IDiagramGenerator {
 			return "";
 		}		
 	}
+	
+	def <T extends SModelElement> T traceElement(T traceable, EObject source) {
+		trace(traceable, source)
+	}
+
+	def <T extends SModelElement> T traceElement(T traceable, EObject source, EStructuralFeature feature, int index) {
+		trace(traceable, source, feature, index)
+	}
+	
+	
+	def <T extends SModelElement> T traceAndMark(T sElement, EObject element, Context context) {
+		sElement.trace(element).addIssueMarkers(element, context) 
+	} 
 	
 }

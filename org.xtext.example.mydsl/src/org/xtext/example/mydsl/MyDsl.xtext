@@ -14,7 +14,7 @@ DecisionRecord:
 	outcome=Outcome;
 
 Title:
-	'Title:' 
+	'Title:'
 	label=STRING;
 
 UserStory:

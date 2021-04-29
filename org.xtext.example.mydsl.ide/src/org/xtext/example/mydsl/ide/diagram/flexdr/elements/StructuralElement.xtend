@@ -8,14 +8,20 @@ import org.eclipse.sprotty.xtext.IDiagramGenerator.Context
 import org.eclipse.emf.ecore.EObject
 import org.xtext.example.mydsl.ide.diagram.flexdr.MetaModelClass
 import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher
+import org.xtext.example.mydsl.ide.diagram.flexdr.DiagramGenerator
+import org.eclipse.emf.ecore.EAttribute
 
+/**
+ * @author Robert Richter
+ * @date 29th April 2021
+ */
 class StructuralElement extends SNode {
 	
 	public SPort port
 	public SLabel label
 	
 	// Tracing is ignored for the moment.
-	new(String label, String type, Context context) {
+	new(String label, String type, Context context, EObject object, extension DiagramGenerator traceProvider) {
 		super()
 
 		this.setType(type.toLowerCase())
@@ -37,11 +43,25 @@ class StructuralElement extends SNode {
 			text = label
 		]
 		
+		if (object !== null) {
+			val eAttributes = object.eClass.EAllAttributes
+			var EAttribute labelEAttribute
+			for (eAttribute : eAttributes) {				
+				if (eAttribute.name.equals("label")) 
+					labelEAttribute = eAttribute
+			}
+			
+			traceElement(this.label, object, labelEAttribute, -1)
+		}
+		
+		
 		this.port = new SPort [
 			id = context.idCache.uniqueId(objId + ".port")
 		]
 		
 		this.children = #[ this.label, this.port ]
+		if (object !== null)
+			traceAndMark(this, object, context)		
 		
 	}
 	

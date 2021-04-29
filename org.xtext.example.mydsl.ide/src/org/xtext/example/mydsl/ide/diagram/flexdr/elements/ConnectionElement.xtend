@@ -6,12 +6,14 @@ import org.eclipse.sprotty.xtext.IDiagramGenerator.Context
 import org.eclipse.sprotty.SModelElement
 import org.xtext.example.mydsl.ide.diagram.flexdr.MetaModelClass
 import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher
+import org.xtext.example.mydsl.ide.diagram.flexdr.DiagramGenerator
 
 class ConnectionElement extends SEdge {
 	
 	new(String label, String type, 
 		EObject astObject, Context context, 
-		SModelElement source, SModelElement target
+		SModelElement source, SModelElement target,
+		DiagramGenerator traceProvider
 	){
 		super()
 
