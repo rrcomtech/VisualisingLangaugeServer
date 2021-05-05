@@ -20,20 +20,23 @@ import org.eclipse.sprotty.xtext.tracing.ITraceProvider
 import com.google.inject.Inject
 import org.eclipse.sprotty.xtext.SIssueMarkerDecorator
 import org.eclipse.emf.ecore.EStructuralFeature
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod
 
 class DiagramGenerator implements IDiagramGenerator {
 	
 	@Inject extension ITraceProvider
 	@Inject extension SIssueMarkerDecorator
 	
-
-	String LABEL_ATTRIBUTE_NAME = "label";
-	List<Binding> bindings;
+	
+	public String LABEL_ATTRIBUTE_NAME = "name"
+	// If attribute "name" does not exist, use label. 
+	// Using the attribute label, make the node unmodifiable.
+	public String LABEL_FALLBACK_ATTRIBUTE_NAME = "label"
+	List<Binding> bindings
 	
 	new() {
 		// Get bindings set up by user.
-		var bindingSetup = new BindingsSetup()
-		bindings = bindingSetup.bindings
+		bindings = (new BindingsSetup()).bindings
 	}
 	
 	/**
@@ -44,7 +47,7 @@ class DiagramGenerator implements IDiagramGenerator {
 		var model = context.resource.contents.head
 				
 		var graph = new SGraph()
-		var root = new StructuralElement("Issue", "node", context, null, this)
+		var root = new StructuralElement("Issue", false, "node", context, null, this)
 		
 		var children = new ArrayList<SModelElement>()
 		children.add(root)
@@ -81,11 +84,13 @@ class DiagramGenerator implements IDiagramGenerator {
 		}
 						
 		// Create Node for currect object 
-		val label = getLabel(obj)
+		val retrievedAttribute = getLabel(obj)
+		val label = retrievedAttribute.label
+		val modifiable = retrievedAttribute.modifiable
 		
 		var StructuralElement node;		
 		if (label instanceof String) {
-			node = new StructuralElement(label, binding.structuralClass.toString(), context, obj, this)
+			node = new StructuralElement(label, modifiable, binding.structuralClass.toString(), context, obj, this)
 			diagramElements.add(node)
 			
 			// If relationship binding is set, connect to parent element.
@@ -124,14 +129,18 @@ class DiagramGenerator implements IDiagramGenerator {
 	/**
 	 * Searches for the label value of a given EObject. If not found, returns null.
 	 */
-	def Object getLabel(EObject obj) {
+	def RetrievedAttribute getLabel(EObject obj) {
 		try {
-			return AttributeManager.getProperty(obj, this.LABEL_ATTRIBUTE_NAME);			
+			val label = AttributeManager.getProperty(obj, this.LABEL_ATTRIBUTE_NAME)
+			return (new RetrievedAttribute(label, true))
 		} catch (Exception e) {
-			e.printStackTrace();
-			// A label could not be retrieved.
-			return "";
-		}		
+			try {
+				val label = AttributeManager.getProperty(obj, this.LABEL_FALLBACK_ATTRIBUTE_NAME)
+				return (new RetrievedAttribute(label, false))
+			} catch (Exception e2) {}			
+		}
+		// Both attributes for labels are not found.
+		return null;
 	}
 	
 	def <T extends SModelElement> T traceElement(T traceable, EObject source) {
@@ -146,5 +155,18 @@ class DiagramGenerator implements IDiagramGenerator {
 	def <T extends SModelElement> T traceAndMark(T sElement, EObject element, Context context) {
 		sElement.trace(element).addIssueMarkers(element, context) 
 	} 
+	
+	/**
+	 * Helper class do determine both, a String and a flag if it is supposed to be modifiable.
+	 */
+	private static class RetrievedAttribute {
+		boolean modifiable
+		Object label
+		new(Object label, boolean modifiable) {
+			this.label = label
+			this.modifiable = modifiable
+		}
+	}
+	
 	
 }

@@ -35,35 +35,35 @@ class MyDslGenerator extends AbstractGenerator {
 //		''')
 //
 		fsa.generateFile(fileName + ".md", '''
-			# «model.records.head.title.label»
+			# «model.records.head.title.name»
 
-			**User story:** «decisionRecord.userStory.label»
+			**User story:** «decisionRecord.userStory.name»
 
-			«decisionRecord.summary.label»
+			«decisionRecord.summary.name»
 
 			## Considered Alterantives
 
 			«FOR alt : decisionRecord.consideredAlteratives.alternatives»
-				* «alt.label»
+				* «alt.name»
 			«ENDFOR»
 
 			## Decision Outcome
 
-			* **Chosen Alternative:** «decisionRecord.outcome.selected.label.label»
-			* **Reason:** «decisionRecord.outcome.rationale.label»
+			* **Chosen Alternative:** «decisionRecord.outcome.selected.name.name»
+			* **Reason:** «decisionRecord.outcome.rationale.name»
 		''')
 
 		fsa.generateFile(fileName + ".tex", '''
 			% ==================================================================================
 			% ==================================================================================
 			%
-			%                           «model.records.head.title.label»
+			%                           «model.records.head.title.name»
 			%
 			% ==================================================================================
 			% ==================================================================================
 			%
 			% Titel des Projektes
-			\newcommand{\topic}{«model.records.head.title.label»}
+			\newcommand{\topic}{«model.records.head.title.name»}
 			% include header (for an constitant document layout)
 
 			% ==================================================================================
@@ -148,7 +148,7 @@ class MyDslGenerator extends AbstractGenerator {
 			    breaklinks=true,                                    %
 			    pdfpagemode=UseOutlines,                            %
 			    plainpages=false,                                   %
-			    pdfpagelabels,                                      %
+			    pdfpagenames,                                      %
 			    bookmarksnumbered,                                  %
 			    bookmarksopen,                                      %
 			    pdfstartview=FitV,                                  %
@@ -344,20 +344,20 @@ class MyDslGenerator extends AbstractGenerator {
 			\section*{User Story}
 
 			\begin{itemize}
-				\item «decisionRecord.userStory.label»
+				\item «decisionRecord.userStory.name»
 			\end{itemize}
 
 			\section*{Summary}
 
 			\begin{itemize}
-				\item «decisionRecord.summary.label»
+				\item «decisionRecord.summary.name»
 			\end{itemize}
 
 			\section*{Considered Alterantives}
 
 			\begin{enumerate}
 				«FOR alt : decisionRecord.consideredAlteratives.alternatives»
-					\item «alt.label»
+					\item «alt.name»
 				«ENDFOR»
 			\end{enumerate}
 
@@ -366,13 +366,13 @@ class MyDslGenerator extends AbstractGenerator {
 			\subsubsection*{Chosen Alternative}
 
 			\begin{itemize}
-				\item «decisionRecord.outcome.selected.label.label»
+				\item «decisionRecord.outcome.selected.name.name»
 			\end{itemize}
 			
 			\subsubsection*{Reason}
 
 			\begin{itemize}
-				\item «decisionRecord.outcome.rationale.label»
+				\item «decisionRecord.outcome.rationale.name»
 			\end{itemize}
 			
 			%

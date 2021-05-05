@@ -21,7 +21,7 @@ class StructuralElement extends SNode {
 	public SLabel label
 	
 	// Tracing is ignored for the moment.
-	new(String label, String type, Context context, EObject object, extension DiagramGenerator traceProvider) {
+	new(String label, boolean modifiable, String type, Context context, EObject object, extension DiagramGenerator traceProvider) {
 		super()
 
 		this.setType(type.toLowerCase())
@@ -43,24 +43,17 @@ class StructuralElement extends SNode {
 			text = label
 		]
 		
-		if (object !== null) {
-			val eAttributes = object.eClass.EAllAttributes
-			var EAttribute labelEAttribute
-			for (eAttribute : eAttributes) {				
-				if (eAttribute.name.equals("label")) 
-					labelEAttribute = eAttribute
-			}
-			
-			traceElement(this.label, object, labelEAttribute, -1)
-		}
-		
+		if (object !== null && modifiable) 
+			for (eAttribute : object.eClass.EAllAttributes) 			
+				if (eAttribute.name.equals(LABEL_ATTRIBUTE_NAME)) 					
+					traceElement(this.label, object, eAttribute, -1)		
 		
 		this.port = new SPort [
 			id = context.idCache.uniqueId(objId + ".port")
 		]
 		
 		this.children = #[ this.label, this.port ]
-		if (object !== null)
+		if (object !== null && modifiable)
 			traceAndMark(this, object, context)		
 		
 	}
