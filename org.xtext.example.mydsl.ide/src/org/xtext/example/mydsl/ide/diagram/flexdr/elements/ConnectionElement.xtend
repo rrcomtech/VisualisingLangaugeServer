@@ -4,7 +4,7 @@ import org.eclipse.sprotty.SEdge
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.sprotty.xtext.IDiagramGenerator.Context
 import org.eclipse.sprotty.SModelElement
-import org.xtext.example.mydsl.ide.diagram.flexdr.MetaModelClass
+import org.xtext.example.mydsl.ide.diagram.flexdr.EMetaModelTypes
 import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher
 import org.xtext.example.mydsl.ide.diagram.flexdr.DiagramGenerator
 

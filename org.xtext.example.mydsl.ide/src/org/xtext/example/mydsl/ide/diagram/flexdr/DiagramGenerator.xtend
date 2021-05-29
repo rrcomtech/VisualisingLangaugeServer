@@ -9,7 +9,7 @@ import org.eclipse.sprotty.SGraph
 import java.util.ArrayList
 import org.eclipse.sprotty.SNode
 import org.eclipse.sprotty.SLabel
-import org.xtext.example.mydsl.ide.diagram.flexdr.MetaModelClass.Binding
+import org.xtext.example.mydsl.ide.diagram.flexdr.EMetaModelTypes.Binding
 import org.xtext.example.mydsl.myDsl.impl.*
 import org.xtext.example.mydsl.ide.diagram.flexdr.elements.StructuralElement
 import org.xtext.example.mydsl.ide.diagram.flexdr.elements.ConnectionElement
@@ -89,14 +89,25 @@ class DiagramGenerator implements IDiagramGenerator {
 		val modifiable = retrievedAttribute.modifiable
 		
 		var StructuralElement node;		
+		
+		/*
+		 * A label can either be a text, or an AST-Object. 
+		 * In case it is a text, this simply can be used as the caption of the node.
+		 * If it is an AST-Object, this object will become the object to be translated.
+		 */
 		if (label instanceof String) {
-			node = new StructuralElement(label, modifiable, binding.structuralClass.toString(), context, obj, this)
-			diagramElements.add(node)
 			
-			// If relationship binding is set, connect to parent element.
-			if (binding.connectionClass !== null) {
-				diagramElements.add(new ConnectionElement("", binding.connectionClass.toString(), obj, context, parent, node.port, this))
+			// The object is a node.
+			if (binding.type.isStructural()) {
+				node = new StructuralElement(label, modifiable, binding.type.toString(), context, obj, this)
+				diagramElements.add(node)
 			}
+			// The object is an edge.
+			if (binding.type.isConnection()) {
+				val edge = new ConnectionElement("", binding.type.toString(), obj, context, parent, node.port, this)
+				diagramElements.add(edge)
+			}
+			
 		} else {
 			if (label !== null) {
 				if (label instanceof EObject) {
@@ -120,7 +131,7 @@ class DiagramGenerator implements IDiagramGenerator {
 	def Binding findBinding(EObject obj) {
 		for (binding : this.bindings) {
 			val className = obj.class.simpleName
-			val bindingClassName = binding.astObjectClassName
+			val bindingClassName = binding.classToBeBinded
 			if (className.equals(bindingClassName)) return binding
 		}
 		return null

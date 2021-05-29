@@ -16,7 +16,7 @@ import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher;
  * which is translated to a representation in the frontend.
  * 
  */
-public enum MetaModelClass {
+public enum EMetaModelTypes {
 
 	// Structural Elements
 	DROBJECT,
@@ -44,7 +44,7 @@ public enum MetaModelClass {
 		return NO_TYPE;
 	}
 	
-	public static String toString(MetaModelClass cl) {		
+	public static String toString(EMetaModelTypes cl) {		
 		switch(cl) {
 		case DROBJECT:
 			return "Drobject";
@@ -73,7 +73,7 @@ public enum MetaModelClass {
 		}		
 	}
 	
-	public static MetaModelClass getMetaModelClass(String cl) {
+	public static EMetaModelTypes getMetaModelClass(String cl) {
 		switch(cl) {
 		case "Drobject":
 			return DROBJECT;
@@ -111,9 +111,9 @@ public enum MetaModelClass {
 	 * @return
 	 */
 	public static String hasAnyProperty(EObject obj) {		
-		MetaModelClass[] classes = MetaModelClass.values();
+		EMetaModelTypes[] classes = EMetaModelTypes.values();
 		for (int i = 0; i < classes.length; i++) {			
-			MetaModelClass metaModelClass = classes[i];
+			EMetaModelTypes metaModelClass = classes[i];
 			String metaModelClassName = metaModelClass.toString();
 			if (AttributeManager.objectHasProperty(obj, metaModelClass.toString())) {
 				return metaModelClassName;
@@ -147,13 +147,11 @@ public enum MetaModelClass {
 	}
 	
 	public static class Binding {
-		public final MetaModelClass structuralClass;
-		public final MetaModelClass connectionClass;
-		public final String astObjectClassName;
-		public Binding(String classToBeBinded, MetaModelClass structuralClass, MetaModelClass connectionClass) {
-			this.structuralClass = structuralClass;
-			this.connectionClass = connectionClass;
-			this.astObjectClassName = classToBeBinded;
+		public final String classToBeBinded;
+		public final EMetaModelTypes type;
+		public Binding(String classToBeBinded, EMetaModelTypes type) {
+			this.type = type;
+			this.classToBeBinded = classToBeBinded;
 		}
 	}
 	
