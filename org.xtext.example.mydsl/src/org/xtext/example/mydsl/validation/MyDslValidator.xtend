@@ -17,7 +17,7 @@ import org.xtext.example.mydsl.myDsl.DecisionRecord
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class MyDslValidator extends AbstractMyDslValidator {
-	
+	/*
 	public static val INVALID_NAME = 'invalidName'
 
 	@Check
@@ -38,6 +38,6 @@ class MyDslValidator extends AbstractMyDslValidator {
 					MyDslPackage.Literals.TITLE__NAME,
 					INVALID_NAME)
 		}
-	}
+	} */
 
 }

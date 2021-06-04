@@ -146,13 +146,6 @@ public enum EMetaModelTypes {
 		return !isStructural();
 	}
 	
-	public static class Binding {
-		public final String classToBeBinded;
-		public final EMetaModelTypes type;
-		public Binding(String classToBeBinded, EMetaModelTypes type) {
-			this.type = type;
-			this.classToBeBinded = classToBeBinded;
-		}
-	}
+
 	
 }

@@ -18,7 +18,7 @@ import org.xtext.example.mydsl.myDsl.DecisionRecord
 class MyDslGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-		
+		/*
 		val model = resource.contents.head as Model;
 		// @type DecisionRecord
 		val decisionRecord = model.records.head;
@@ -378,7 +378,7 @@ class MyDslGenerator extends AbstractGenerator {
 			%
 			\end{document}
 
-		''')
+		''') */
 
 	}
 }

@@ -9,7 +9,6 @@ import org.eclipse.sprotty.SGraph
 import java.util.ArrayList
 import org.eclipse.sprotty.SNode
 import org.eclipse.sprotty.SLabel
-import org.xtext.example.mydsl.ide.diagram.flexdr.EMetaModelTypes.Binding
 import org.xtext.example.mydsl.myDsl.impl.*
 import org.xtext.example.mydsl.ide.diagram.flexdr.elements.StructuralElement
 import org.xtext.example.mydsl.ide.diagram.flexdr.elements.ConnectionElement
@@ -168,13 +167,15 @@ class DiagramGenerator implements IDiagramGenerator {
 	} 
 	
 	/**
-	 * Helper class do determine both, a String and a flag if it is supposed to be modifiable.
+	 * Helper class do determine both, a String and a flag if an AST-object is supposed to be modifiable.
 	 */
 	private static class RetrievedAttribute {
 		boolean modifiable
 		Object label
 		new(Object label, boolean modifiable) {
+			// The AST-object, which got the attribute "label". Not necessarily a String.
 			this.label = label
+			// The flag, which is process earlier.
 			this.modifiable = modifiable
 		}
 	}

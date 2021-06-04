@@ -1,7 +1,6 @@
 package org.xtext.example.mydsl.ide.diagram.flexdr
 
 import java.util.List
-import org.xtext.example.mydsl.ide.diagram.flexdr.EMetaModelTypes.Binding
 import java.util.ArrayList
 import org.xtext.example.mydsl.myDsl.impl.*
 
