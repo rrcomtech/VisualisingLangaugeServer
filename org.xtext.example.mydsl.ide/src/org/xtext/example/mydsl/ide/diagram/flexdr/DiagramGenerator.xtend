@@ -7,25 +7,20 @@ import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.sprotty.SGraph
 import java.util.ArrayList
-import org.eclipse.sprotty.SNode
-import org.eclipse.sprotty.SLabel
-import org.xtext.example.mydsl.myDsl.impl.*
 import org.xtext.example.mydsl.ide.diagram.flexdr.elements.StructuralElement
 import org.xtext.example.mydsl.ide.diagram.flexdr.elements.ConnectionElement
-import org.eclipse.sprotty.SPort
-import org.eclipse.emf.common.util.EList
-import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher
 import org.eclipse.sprotty.xtext.tracing.ITraceProvider
 import com.google.inject.Inject
 import org.eclipse.sprotty.xtext.SIssueMarkerDecorator
 import org.eclipse.emf.ecore.EStructuralFeature
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod
+import java.util.logging.Logger
 
 class DiagramGenerator implements IDiagramGenerator {
 	
 	@Inject extension ITraceProvider
 	@Inject extension SIssueMarkerDecorator
 	
+	Logger logger	
 	
 	public String LABEL_ATTRIBUTE_NAME = "name"
 	// If attribute "name" does not exist, use label. 
@@ -34,6 +29,7 @@ class DiagramGenerator implements IDiagramGenerator {
 	List<Binding> bindings
 	
 	new() {
+		logger = Logger.getLogger("Generator")
 		// Get bindings set up by user.
 		bindings = (new BindingsSetup()).bindings
 	}
@@ -50,7 +46,7 @@ class DiagramGenerator implements IDiagramGenerator {
 		
 		var children = new ArrayList<SModelElement>()
 		children.add(root)
-		children.addAll(translateAstToDiagram(model, context, root.port))
+		children.addAll(translateAstToDiagram(model, context, root.port, EMetaModelTypes.STATEMENT))
 		graph.children = children
 		return graph
 	
@@ -64,10 +60,13 @@ class DiagramGenerator implements IDiagramGenerator {
 	 * The result of each recursive iteration is a list of diagram elements.
 	 * 
 	 */
-	def List<SModelElement> translateAstToDiagram(EObject obj, Context context, SModelElement parent) {
+	def List<SModelElement> translateAstToDiagram(EObject obj, Context context, SModelElement parent, EMetaModelTypes parentType) {
 			
+		// ---------- Find the binding ----------
 		// Look up the binding.
-		val binding = this.findBinding(obj)
+		var binding = this.findBinding(obj)
+			
+		if (binding !== null) logger.info("Binding found for " + obj.class.simpleName)
 		
 		// Look up the child elements.
 		val children = obj.eContents
@@ -77,55 +76,101 @@ class DiagramGenerator implements IDiagramGenerator {
 		if (binding === null) {			
 			// Recursively finds representations for child elements.
 			for (child : children) {
-				diagramElements.addAll(translateAstToDiagram(child, context, parent))
+				diagramElements.addAll(translateAstToDiagram(child, context, parent, parentType))
 			}
 			return diagramElements
 		}
+		
+		// ---------- Get Label ----------
 						
 		// Create Node for currect object 
 		val retrievedAttribute = getLabel(obj)
-		val label = retrievedAttribute.label
+		val Object label = retrievedAttribute.label
 		val modifiable = retrievedAttribute.modifiable
 		
-		var StructuralElement node;		
+		var StructuralElement node;
 		
-		/*
-		 * A label can either be a text, or an AST-Object. 
-		 * In case it is a text, this simply can be used as the caption of the node.
-		 * If it is an AST-Object, this object will become the object to be translated.
-		 */
-		if (label instanceof String) {
-			
-			// The object is a node.
-			if (binding.type.isStructural()) {
-				node = new StructuralElement(label, modifiable, binding.type.toString(), context, obj, this)
-				diagramElements.add(node)
-			}
-			// The object is an edge.
-			if (binding.type.isConnection()) {
-				val edge = new ConnectionElement("", binding.type.toString(), obj, context, parent, node.port, this)
-				diagramElements.add(edge)
-			}
-			
+		// ---------- Add diagram elements ----------
+		logger.info("Labels called.")
+		if (binding.isConnection()) {
+			logger.info("Generating new connection.")
+			/**
+			 * "" 	--> No text
+			 * binding.type.toString()
+			 * 	  	--> Serialize the title to a text
+			 * obj
+			 * 		--> The AST-Object TODO Remove ! Not needed for connection element.
+			 * context 
+			 * 		--> The diagram context needed for performing ops on the whole diagram.
+			 * parent
+			 * 		--> Source
+			 * null
+			 * 		--> Target (still null)
+			 * this
+			 * 		--> Tracing methods ("TraceProvider") 
+			 */
+			val edge = new ConnectionElement("", binding.type.toString(), obj, context, parent, null, this)
+			diagramElements.add(edge)
 		} else {
-			if (label !== null) {
-				if (label instanceof EObject) {
-					diagramElements.addAll(translateAstToDiagram(label, context, parent))
+			logger.info("Generating new Struct")
+			if (label instanceof String) {
+				
+				if (binding.isStructural()) {
+					node = new StructuralElement(label, modifiable, binding.type.toString(), context, obj, this)
+					diagramElements.add(node)
+					logger.info("Struct added to diagram.")
+					
+					// If parent was no connection itself, add a connection to this structural child element.
+					if (parentType.isStructural()) {
+						var connectionBinding = findConnectionBinding(parentType, binding.type)
+						if (connectionBinding === null) connectionBinding = findBindingSoft(parentType)
+						logger.info("Softbinding was looked after.")
+						if (connectionBinding !== null) {
+							val edge = new ConnectionElement("", connectionBinding.type.toString(), obj, context, parent, node.port, this)
+							diagramElements.addAll(edge)
+						}
+					} else {
+						// If parent was a connection, set it's target to the new structural element.
+						if (parentType.isConnection()) {
+							if (parent instanceof ConnectionElement) {
+								parent.setTarget(node.port.id)
+							}
+						}
+						
+					}
+					
+				}
+				
+			} else {
+				if (label !== null) {
+					if (label instanceof EObject) {
+						diagramElements.addAll(translateAstToDiagram(label, context, parent, parentType))
+					}
 				}
 			}
 		}
 		
+		// ---------- Apply Method for all children ----------
+		
 		for (child : children) {
 			// The current object becomes the parent object.
-			diagramElements.addAll(translateAstToDiagram(child, context, node))
+			diagramElements.addAll(translateAstToDiagram(child, context, node, binding.type))
 		}
 		
 		return diagramElements 
 		
 	}
 	
+	/**
+	 * ----------- Methods for finding the appropriate Binding -----------
+	 */
+	
 	/** 
 	 * Looks up the bindings "dictionary" to find the binding for the given object.
+	 * 
+	 * Based on the name of the class of the object (retrieved from EObject), the 
+	 * name is looked up in the dictionary. 
+	 * 
 	 */
 	def Binding findBinding(EObject obj) {
 		for (binding : this.bindings) {
@@ -134,6 +179,44 @@ class DiagramGenerator implements IDiagramGenerator {
 			if (className.equals(bindingClassName)) return binding
 		}
 		return null
+	}
+	
+	/**
+	 * Looks up the bindings "dictionary" to find the binding for the given object.
+	 * 
+	 * Based on the type of the source and target, a binding is searched. 
+	 * If a perfect match is found, it will be returned. 
+	 */
+	def Binding findConnectionBinding(EMetaModelTypes source, EMetaModelTypes target) {		
+		for (binding : this.bindings) {
+			val sourceType = binding.source
+			val targetType = binding.target
+			
+			// Makes sure the current binding is used for a connection.
+			if (sourceType !== null && targetType !== null) {
+				if (source.equals(sourceType) && target.equals(targetType)) {
+					return binding
+				} 				
+			}			
+		}
+		return null		
+	}
+	/**
+	 * This methods checks, if the source of a binding matches the given type.
+	 * The first binding to match, will be returned.
+	 */
+	def Binding findBindingSoft(EMetaModelTypes source) {
+		for (binding : this.bindings) {
+			val sourceType = binding.source
+			
+			// Makes sure the current binding is used for a connection.
+			if (sourceType !== null) {
+				if (source.equals(sourceType)) {
+					return binding
+				} 				
+			}			
+		}
+		return null		
 	}
 	
 	/**

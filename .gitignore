@@ -1,5 +1,7 @@
 # Caches
-cache
+caches
+native
+daemon
 
 # Node
 node_modules

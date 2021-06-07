@@ -6,10 +6,7 @@ import org.eclipse.sprotty.SPort
 import org.eclipse.sprotty.SLabel
 import org.eclipse.sprotty.xtext.IDiagramGenerator.Context
 import org.eclipse.emf.ecore.EObject
-import org.xtext.example.mydsl.ide.diagram.flexdr.EMetaModelTypes
-import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher
 import org.xtext.example.mydsl.ide.diagram.flexdr.DiagramGenerator
-import org.eclipse.emf.ecore.EAttribute
 
 /**
  * @author Robert Richter

@@ -4,6 +4,22 @@ package org.xtext.example.mydsl.ide.diagram.flexdr;
  * A Binding is an information about one relation between an object from the grammar and the
  * FlexDRMetaModel.
  * 
+ * A Bindings can have one of three "types":
+ * 		- A structural Binding
+ * 				This is to be used for a structural element. It knows the name of the class
+ * 				from the grammar, which shall be binded and the corresponding structural 
+ * 				Meta Model type.
+ * 		- A connection Binding with existing Class
+ * 				This is to be used for a connection element. It knows the name of the class
+ * 				from the grammar, which shall be binded and the corresponding structural
+ * 				Meta Model type. Additionally, information is given which type source and
+ * 				target of the connection have.
+ * 		- A connection Binding without existing Class
+ * 				This is to be used for a connection element, which itself is not represented
+ * 				within the grammar. It knows the type of the connection. Additionally, 
+ * 				information is given which type source and target of the connection have.
+ * 
+ * 
  * @author Robert Richter
  * @date Refactored to own class at 04.06.2021 (formerly a static class within EMetaModelTypes).
  *
@@ -44,6 +60,14 @@ class Binding {
 	 * Use this constructor for connection elements, which are not personally present in the grammar. 
 	 * So you could just state, that every two structural element with a direct relation in the grammar,
 	 * are to be connected with such an association, even though there is no class representing this relation.
+	 * 
+	 * @type
+	 * 			A connection type.
+	 * @source
+	 * 			A structural type which is the source of an edge.
+	 * @target
+	 * 			A structural type which is the target of an edge.
+	 * 
 	 */
 	new(EMetaModelTypes type, EMetaModelTypes source, EMetaModelTypes target) {
 		this.classToBeBinded = null

@@ -6,19 +6,25 @@ import org.xtext.example.mydsl.myDsl.impl.*
 
 class BindingsSetup {
 	
-	private List<Binding> bindings
+	List<Binding> bindings
 	
 	new() {
 		
 		bindings = new ArrayList<Binding>()
-		
+		/*
+		 * Binding have the style: 
+		 * new Binding(TitleImpl.simpleName, EMetaModelTypes.STATEMENT),
+		 * new Binding(LineImpl.simpleName, EMetaModelTypes.ARGUMENTATIVE_RELATIONSHIP),
+		 * ...
+		 * 
+		 * To be concrete, there are three kinds of bindings. For detailed information, see
+		 * Binding.xtend.
+		 * 
+		 */
 		bindings.addAll(
-			/*
-			 * Binding have the style: 
-			 * new Binding(TitleImpl.simpleName, EMetaModelTypes.STATEMENT),
-			 * new Binding(LineImpl.simpleName, EMetaModelTypes.ARGUMENTATIVE_RELATIONSHIP),
-			 * ...
-			 */
+			
+			new Binding(TitleImpl.simpleName, EMetaModelTypes.STATEMENT),
+			new Binding(EMetaModelTypes.ARGUMENTATIVE_RELATIONSHIP, EMetaModelTypes.STATEMENT, EMetaModelTypes.STATEMENT)
 			
 		)
 		
