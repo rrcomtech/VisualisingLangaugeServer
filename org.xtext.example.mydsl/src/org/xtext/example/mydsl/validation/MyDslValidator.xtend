@@ -19,7 +19,7 @@ import org.xtext.example.mydsl.myDsl.DecisionRecord
 class MyDslValidator extends AbstractMyDslValidator {
 	
 	public static val INVALID_NAME = 'invalidName'
-/*
+
 	@Check
 	def checkNumberOfAlternatives(DecisionRecord record) {
 		
@@ -38,6 +38,6 @@ class MyDslValidator extends AbstractMyDslValidator {
 					MyDslPackage.Literals.TITLE__NAME,
 					INVALID_NAME)
 		}
-	} */
+	} 
 
 }

@@ -29,7 +29,6 @@ class DiagramGenerator implements IDiagramGenerator {
 	List<Binding> bindings
 	
 	new() {
-		logger = Logger.getLogger("Generator")
 		// Get bindings set up by user.
 		bindings = (new BindingsSetup()).bindings
 	}
@@ -65,8 +64,6 @@ class DiagramGenerator implements IDiagramGenerator {
 		// ---------- Find the binding ----------
 		// Look up the binding.
 		var binding = this.findBinding(obj)
-			
-		if (binding !== null) logger.info("Binding found for " + obj.class.simpleName)
 		
 		// Look up the child elements.
 		val children = obj.eContents
@@ -91,9 +88,7 @@ class DiagramGenerator implements IDiagramGenerator {
 		var StructuralElement node;
 		
 		// ---------- Add diagram elements ----------
-		logger.info("Labels called.")
 		if (binding.isConnection()) {
-			logger.info("Generating new connection.")
 			/**
 			 * "" 	--> No text
 			 * binding.type.toString()
@@ -112,19 +107,17 @@ class DiagramGenerator implements IDiagramGenerator {
 			val edge = new ConnectionElement("", binding.type.toString(), obj, context, parent, null, this)
 			diagramElements.add(edge)
 		} else {
-			logger.info("Generating new Struct")
 			if (label instanceof String) {
 				
 				if (binding.isStructural()) {
 					node = new StructuralElement(label, modifiable, binding.type.toString(), context, obj, this)
 					diagramElements.add(node)
-					logger.info("Struct added to diagram.")
 					
 					// If parent was no connection itself, add a connection to this structural child element.
 					if (parentType.isStructural()) {
 						var connectionBinding = findConnectionBinding(parentType, binding.type)
 						if (connectionBinding === null) connectionBinding = findBindingSoft(parentType)
-						logger.info("Softbinding was looked after.")
+
 						if (connectionBinding !== null) {
 							val edge = new ConnectionElement("", connectionBinding.type.toString(), obj, context, parent, node.port, this)
 							diagramElements.addAll(edge)
