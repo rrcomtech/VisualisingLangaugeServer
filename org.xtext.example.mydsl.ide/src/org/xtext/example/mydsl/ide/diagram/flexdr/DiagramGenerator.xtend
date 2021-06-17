@@ -119,7 +119,7 @@ class DiagramGenerator implements IDiagramGenerator {
 						if (connectionBinding === null) connectionBinding = findBindingSoft(parentType)
 
 						if (connectionBinding !== null) {
-							val edge = new ConnectionElement("", connectionBinding.type.toString(), obj, context, parent, node.port, this)
+							val edge = new ConnectionElement("", connectionBinding.type.toString(), obj, context, parent, node, this)
 							diagramElements.addAll(edge)
 						}
 					} else {

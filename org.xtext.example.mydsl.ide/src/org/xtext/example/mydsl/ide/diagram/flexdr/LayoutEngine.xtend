@@ -19,7 +19,12 @@ class LayoutEngine extends ElkLayoutEngine {
 	 * a fixed layout.
 	 */
 	override layout(SModelRoot root, Action cause) {
+		
+		// Takes all defined MetaModelTypes.
+		val allTypes = EMetaModelTypes.values()
+		
 		if (root instanceof SGraph) {
+			// Preconfigured by Typefox example.
 			val configurator = new SprottyLayoutConfigurator
 			configurator.configureByType('graph')
 				.setProperty(CoreOptions.DIRECTION, Direction.DOWN)
@@ -32,6 +37,20 @@ class LayoutEngine extends ElkLayoutEngine {
 				.setProperty(CoreOptions.PORT_SIDE, PortSide.EAST)
 				.setProperty((CoreOptions.PORT_BORDER_OFFSET), 3.0)
 			layout(root, configurator, cause)
+			
+			// Additionally for FlexDRMetaModel
+			for (type : allTypes) {				
+				if (type.isConnection) {
+					configurator.configureByType(type.toString)
+						.setProperty(CoreOptions.PORT_ALIGNMENT_DEFAULT, PortAlignment.CENTER)
+						.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE)
+					configurator.configureByType('port')
+						.setProperty(CoreOptions.PORT_SIDE, PortSide.EAST)
+						.setProperty((CoreOptions.PORT_BORDER_OFFSET), 3.0)	 
+				} else if (type.isStructural) {
+				}				
+			}
+			
 		}
 	}
 }
