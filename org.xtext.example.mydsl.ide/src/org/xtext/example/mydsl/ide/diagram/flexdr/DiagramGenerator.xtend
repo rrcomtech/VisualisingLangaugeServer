@@ -45,7 +45,7 @@ class DiagramGenerator implements IDiagramGenerator {
 		
 		var children = new ArrayList<SModelElement>()
 		children.add(root)
-		children.addAll(translateAstToDiagram(model, context, root.port, EMetaModelTypes.STATEMENT))
+		children.addAll(translateAstToDiagram(model, context, root, EMetaModelTypes.STATEMENT))
 		graph.children = children
 		return graph
 	
