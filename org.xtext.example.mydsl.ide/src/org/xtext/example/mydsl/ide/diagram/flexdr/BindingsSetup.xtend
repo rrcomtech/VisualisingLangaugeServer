@@ -32,12 +32,14 @@ class BindingsSetup {
 			new Binding(TitleImpl.simpleName, EMetaModelTypes.STATEMENT),
 			new Binding(SummaryImpl.simpleName, EMetaModelTypes.STATEMENT),
 			new Binding(AlternativeImpl.simpleName, EMetaModelTypes.DECISION_OPTION),
+			new Binding(AlternativeImpl.simpleName, EMetaModelTypes.DECISION_RESULT, EMetaModelTypes.STATEMENT),
 			new Binding(AlternativesImpl.simpleName, EMetaModelTypes.DECISION_PROBLEM),
 			new Binding(BecauseImpl.simpleName, EMetaModelTypes.STATEMENT),
 			new Binding(ChosenAlternativeImpl.simpleName, EMetaModelTypes.DECISION_RESULT),
 			new Binding(OutcomeImpl.simpleName, EMetaModelTypes.STATEMENT),
 			new Binding(RationaleImpl.simpleName, EMetaModelTypes.DROBJECT),
 			new Binding(UserStoryImpl.simpleName, EMetaModelTypes.STATEMENT),
+			new Binding(ChosenAlternativeImpl.simpleName, EMetaModelTypes.DECISION_RESULT),
 			
 			/*
 			 * What does this mean?
