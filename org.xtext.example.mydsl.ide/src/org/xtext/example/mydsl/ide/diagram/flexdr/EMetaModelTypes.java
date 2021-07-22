@@ -19,91 +19,53 @@ import org.xtext.example.mydsl.ide.diagram.launch.GraphicalServerLauncher;
 public enum EMetaModelTypes {
 
 	// Structural Elements
-	DROBJECT,
-	STATEMENT,
-	DECISION_PROBLEM_OR_RESULT,
-	DECISION_PROBLEM,
-	DECISION_RESULT,
-	DECISION_OPTION,
+	DROBJECT ("Drobject"),
+	STATEMENT ("Statement"),
+	DECISION_PROBLEM_OR_RESULT ("Decision_problem_or_result"),
+	DECISION_PROBLEM ("Decision_problem"),
+	DECISION_RESULT ("Decision_result"),
+	DECISION_OPTION ("Decision_option"),
 	
 	// Connection Elements
-	GENERIC_RELATIONSHIP,
-	ARGUMENTATIVE_RELATIONSHIP,
-	DERIVATIVE_RELATIONSHIP,
-	CONSEQUENCE_RELATIONSHIP,
-	OPTION_RELATIONSHIP,
+	GENERIC_RELATIONSHIP ("Generic_relationship"),
+	ARGUMENTATIVE_RELATIONSHIP ("Argumentative_relationship"),
+	DERIVATIVE_RELATIONSHIP ("Derivative_relationship"),
+	CONSEQUENCE_RELATIONSHIP ("Consequence_relationship"),
+	OPTION_RELATIONSHIP ("Option_relationship"),
 	
 	// Error found
-	NULL;
+	NULL ("null");
 	
-	public static List<Binding> bindings;
+	private String type;	
+	public static List<Binding> bindings;	
+	private static String NO_TYPE = EMetaModelTypes.NULL.getType();
 	
-	private static String NO_TYPE = "null";
+	EMetaModelTypes(String type) {
+		this.type = type;
+	}
 	
 	public static String getNoType() {
 		return NO_TYPE;
 	}
 	
 	public static String toString(EMetaModelTypes cl) {		
-		switch(cl) {
-		case DROBJECT:
-			return "Drobject";
-		case STATEMENT:
-			return "Statement";
-		case DECISION_PROBLEM_OR_RESULT:
-			return "Decision_problem_or_result";
-		case DECISION_PROBLEM:
-			return "Decision_problem";
-		case DECISION_RESULT:
-			return "Decision_result";
-		case DECISION_OPTION:
-			return "Decision_option";
-		case GENERIC_RELATIONSHIP:
-			return "Generic_relationship";
-		case ARGUMENTATIVE_RELATIONSHIP:
-			return "Argumentative_relationship";
-		case DERIVATIVE_RELATIONSHIP:
-			return "Derivative_relationship";
-		case CONSEQUENCE_RELATIONSHIP:
-			return "Consequence_relationship";
-		case OPTION_RELATIONSHIP:
-			return "Option_relationship";
-		default:
-			return NO_TYPE;
-		}		
+		return cl.getType();
 	}
 	
 	public static EMetaModelTypes getMetaModelClass(String cl) {
-		switch(cl) {
-		case "Drobject":
-			return DROBJECT;
-		case "Statement":
-			return STATEMENT;
-		case "Decision_problem_or_result":
-			return DECISION_PROBLEM_OR_RESULT;
-		case "Decision_problem":
-			return DECISION_PROBLEM;
-		case "Decision_result":
-			return DECISION_RESULT;
-		case "Decision_option":
-			return DECISION_OPTION;
-		case "Generic_relationship":
-			return GENERIC_RELATIONSHIP;
-		case "Argumentative_relationship":
-			return ARGUMENTATIVE_RELATIONSHIP;
-		case "Derivative_relationship":
-			return DERIVATIVE_RELATIONSHIP;
-		case "Consequence_relationship":
-			return CONSEQUENCE_RELATIONSHIP;
-		case "Option_relationship":
-			return OPTION_RELATIONSHIP;
-		default:
-			return NULL;
-		}
+		
+		EMetaModelTypes type = EMetaModelTypes.valueOf(cl);
+		
+		if (type != null) 
+			return type;
+		return NULL;
+
 	}
 	
 	/**
-	 * Returns the name of property if the object has one the features above.
+	 * To be honest, I dont know anymore what this function is used for or what is does.
+	 * 
+	 * Returns the name of property if the object has one of the features above.
 	 * Otherwise returns NULL.
 	 * This is not to be changed!
 	 * 
@@ -142,10 +104,15 @@ public enum EMetaModelTypes {
 		}
 	}
 	
+	/**
+	 * This function could result in issues, if the meta model is changed.
+	 */
 	public boolean isConnection() {
 		return !isStructural();
 	}
 	
-
+	public String getType() {
+		return this.type;
+	}
 	
 }
