@@ -20,7 +20,7 @@ This will start the server with the help of `org.xtext.example.mydsl.websockets.
 ### Scenario 1 -- build and run the LSP binary
 
 1. Run `./gradlew distZip`.
-2. Go to zip file of the ide sub project (, e.g. `find . -name "*ide*zip"`)
+2. Go to zip file of the ide sub project (, e.g. `find . -name "*ide*zip"`). Usually it is located under `org.xtext.example.mydsl.ide/build/distributions/` (means: within the IDE package, under the folders `build/distributions`).
 3. Inflate it
 4. Find the binary file `mydsl-socket`, and
 5. start it as follows:
