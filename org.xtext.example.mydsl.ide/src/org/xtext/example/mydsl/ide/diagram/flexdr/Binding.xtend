@@ -31,6 +31,8 @@ class Binding {
 	public String classToBeBinded
 	// The meta model type, the class to be binded is derived from.
 	public EMetaModelTypes type	
+	// The parent type of the language type.
+	public EMetaModelTypes parentType
 	// The source of a connection
 	public EMetaModelTypes source
 	// The target of a connection
@@ -47,11 +49,26 @@ class Binding {
 		this.target = null		
 	}
 	/**
+	 * Or this one to enforce a specific parent type.
+	 */
+	new(String classToBeBinded, EMetaModelTypes type, EMetaModelTypes parentType) {
+		this.type = type
+		this.classToBeBinded = classToBeBinded
+		
+		this.parentType = parentType
+		
+		this.source = null
+		this.target = null
+	}
+	
+	/**
 	 * Use this constructor for connection elements. It adds support for the type of souce and target.
 	 */
 	new(String classToBeBinded, EMetaModelTypes type, EMetaModelTypes source, EMetaModelTypes target) {
 		this.type = type
 		this.classToBeBinded = classToBeBinded
+		
+		this.parentType = null
 		
 		this.source = source
 		this.target = target
@@ -73,6 +90,8 @@ class Binding {
 		this.classToBeBinded = null
 		this.type = type
 		
+		this.parentType = null
+		
 		this.source = source
 		this.target = target
 	}
@@ -83,6 +102,6 @@ class Binding {
 	
 	def boolean isConnection() {
 		return type.isConnection()
-	}	
+	}
 	
 }

@@ -7,7 +7,7 @@ import org.eclipse.sprotty.SModelElement
 import org.xtext.example.mydsl.ide.diagram.flexdr.DiagramGenerator
 
 class ConnectionElement extends SEdge {
-	
+
 	new(String label, String type, 
 		EObject astObject, Context context, 
 		SModelElement source, SModelElement target,

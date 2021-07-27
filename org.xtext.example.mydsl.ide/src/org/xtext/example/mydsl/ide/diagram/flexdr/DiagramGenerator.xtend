@@ -14,6 +14,7 @@ import com.google.inject.Inject
 import org.eclipse.sprotty.xtext.SIssueMarkerDecorator
 import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.logging.Logger
+import java.util.logging.Level
 
 class DiagramGenerator implements IDiagramGenerator {
 	
@@ -21,6 +22,7 @@ class DiagramGenerator implements IDiagramGenerator {
 	@Inject extension SIssueMarkerDecorator
 	
 	Logger logger	
+	List<Tuple<SModelElement, EObject>> crossReferences
 	
 	public String LABEL_ATTRIBUTE_NAME = "name"
 	// If attribute "name" does not exist, use label. 
@@ -31,10 +33,15 @@ class DiagramGenerator implements IDiagramGenerator {
 	new() {
 		// Get bindings set up by user.
 		bindings = (new BindingsSetup()).bindings
+		crossReferences = new ArrayList<Tuple<SModelElement, EObject>>()
+		
+		logger = Logger.getLogger("DiagramGenerator")
 	}
 	
 	/**
 	 * @returns SModelRoot
+	 * 		Returns the schema of a sprotty graph. This includes a list of all diagram elements
+	 * 		in the "children" attribute.
 	 */
 	override generate(Context context) {
 		
@@ -42,11 +49,16 @@ class DiagramGenerator implements IDiagramGenerator {
 				
 		var graph = new SGraph()
 		var root = new StructuralElement("Issue", false, "node", context, null, this)
-		
-		var children = new ArrayList<SModelElement>()
+			
+		var children = new ArrayList<SModelElement>
 		children.add(root)
 		children.addAll(translateAstToDiagram(model, context, root, EMetaModelTypes.STATEMENT))
+					
 		graph.children = children
+		
+		// Remove everything from temporary memory.
+		this.crossReferences.remove(true)
+		
 		return graph
 	
 	}
@@ -56,15 +68,15 @@ class DiagramGenerator implements IDiagramGenerator {
 	 * an EObject, which is supposed to be translated into a diagram
 	 * element.
 	 * 
-	 * The result of each recursive iteration is a list of diagram elements.
-	 * 
+	 * The result of each recursive iteration is a list of diagram elements (and for each diagram element, its corresponding ast object is saved too).
 	 */
-	def List<SModelElement> translateAstToDiagram(EObject obj, Context context, SModelElement parent, EMetaModelTypes parentType) {
-			
+	def List<SModelElement> translateAstToDiagram(
+		EObject obj, Context context, SModelElement parent, EMetaModelTypes parentType
+	) {
 		// ---------- Find the binding ----------
 		// Look up the binding.
-		var binding = this.findBinding(obj)
-		
+		var binding = this.findBinding(obj, parentType)
+	
 		// Look up the child elements.
 		val children = obj.eContents
 		val diagramElements = new ArrayList<SModelElement>()
@@ -73,7 +85,11 @@ class DiagramGenerator implements IDiagramGenerator {
 		if (binding === null) {			
 			// Recursively finds representations for child elements.
 			for (child : children) {
-				diagramElements.addAll(translateAstToDiagram(child, context, parent, parentType))
+				diagramElements.addAll(
+					translateAstToDiagram(
+						child, context, parent, parentType
+					)
+				)
 			}
 			return diagramElements
 		}
@@ -107,11 +123,19 @@ class DiagramGenerator implements IDiagramGenerator {
 			val edge = new ConnectionElement("", binding.type.toString(), obj, context, parent, null, this)
 			diagramElements.add(edge)
 		} else {
-			if (label instanceof String) {
+			if (label instanceof String) {				
 				
 				if (binding.isStructural()) {
 					node = new StructuralElement(label, modifiable, binding.type.toString(), context, obj, this)
 					diagramElements.add(node)
+					
+					val tuple = new Tuple(node as SModelElement, obj)
+					val reference = this.crossReferences.wasCrossReferenced(tuple)
+					if (reference !== null) {							
+						val refEdge = new ConnectionElement("", EMetaModelTypes.ARGUMENTATIVE_RELATIONSHIP.toString(), obj, context, node, reference, this)
+						diagramElements.add(refEdge)
+					}
+					this.crossReferences.add(tuple)
 					
 					// If parent was no connection itself, add a connection to this structural child element.
 					if (parentType.isStructural()) {
@@ -120,7 +144,7 @@ class DiagramGenerator implements IDiagramGenerator {
 
 						if (connectionBinding !== null) {
 							val edge = new ConnectionElement("", connectionBinding.type.toString(), obj, context, parent, node, this)
-							diagramElements.addAll(edge)
+							diagramElements.add(edge)
 						}
 					} else {
 						// If parent was a connection, set it's target to the new structural element.
@@ -137,19 +161,24 @@ class DiagramGenerator implements IDiagramGenerator {
 			} else {
 				if (label !== null) {
 					if (label instanceof EObject) {
-						diagramElements.addAll(translateAstToDiagram(label, context, parent, parentType))
+						diagramElements.addAll(
+							translateAstToDiagram(
+								label, context, parent, parentType
+							)
+						)
 					}
 				}
 			}
 		}
 		
-		// ---------- Apply Method for all children ----------
-		
 		for (child : children) {
 			// The current object becomes the parent object.
-			diagramElements.addAll(translateAstToDiagram(child, context, node, binding.type))
+			diagramElements.addAll(
+				translateAstToDiagram(
+					child, context, node, binding.type
+				)
+			)
 		}
-		
 		return diagramElements 
 		
 	}
@@ -165,13 +194,26 @@ class DiagramGenerator implements IDiagramGenerator {
 	 * name is looked up in the dictionary. 
 	 * 
 	 */
-	def Binding findBinding(EObject obj) {
+	def Binding findBinding(EObject obj, EMetaModelTypes parentType) {
+		
+		var Binding candidate = null
 		for (binding : this.bindings) {
 			val className = obj.class.simpleName
 			val bindingClassName = binding.classToBeBinded
-			if (className.equals(bindingClassName)) return binding
+			
+			if (className.equals(bindingClassName)) {
+				if (binding.parentType !== null) {
+					if (binding.parentType == parentType) {
+						// This happens, when also the parent type is specified.
+						// It would be a perfect match.
+						candidate = new Binding(binding.classToBeBinded, binding.type)
+					}
+				} else {
+					candidate = binding
+				}
+			}
 		}
-		return null
+		return candidate
 	}
 	
 	/**
@@ -242,8 +284,19 @@ class DiagramGenerator implements IDiagramGenerator {
 		sElement.trace(element).addIssueMarkers(element, context) 
 	} 
 	
+	def SModelElement wasCrossReferenced(
+		List<Tuple<SModelElement, EObject>> objects, Tuple<SModelElement, EObject> curr
+	) {
+		for (obj : objects) {
+			if (obj.second.equals(curr.second)) {
+				return obj.first
+			}
+		}
+		return null		
+	}
+	
 	/**
-	 * Helper class do determine both, a String and a flag if an AST-object is supposed to be modifiable.
+	 * Helper class to determine both, a String and a flag if an AST-object is supposed to be modifiable.
 	 */
 	private static class RetrievedAttribute {
 		boolean modifiable
@@ -255,6 +308,18 @@ class DiagramGenerator implements IDiagramGenerator {
 			this.modifiable = modifiable
 		}
 	}
+	
+	/**
+	 * Tuple helper class 
+	 */
+	 private static class Tuple<X, Y> {
+	 	public final X first
+	 	public final Y second
+	 	new(X x, Y y) {
+	 		this.first = x
+	 		this.second = y
+	 	}
+	 }
 	
 	
 }
