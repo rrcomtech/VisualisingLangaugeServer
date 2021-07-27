@@ -52,13 +52,13 @@ class DiagramGenerator implements IDiagramGenerator {
 			
 		var children = new ArrayList<SModelElement>
 		children.add(root)
-		
-		var elements = new ArrayList<Tuple<SModelElement, EObject>>()
-		elements.addAll(translateAstToDiagram(model, context, root, EMetaModelTypes.STATEMENT))
-		for (element : elements)
-			children.add(element.first)
+		children.addAll(translateAstToDiagram(model, context, root, EMetaModelTypes.STATEMENT))
 					
 		graph.children = children
+		
+		// Remove everything from temporary memory.
+		this.crossReferences.remove(true)
+		
 		return graph
 	
 	}
@@ -70,25 +70,26 @@ class DiagramGenerator implements IDiagramGenerator {
 	 * 
 	 * The result of each recursive iteration is a list of diagram elements (and for each diagram element, its corresponding ast object is saved too).
 	 */
-	def List<Tuple<SModelElement, EObject>> translateAstToDiagram(EObject obj, Context context, SModelElement parent, EMetaModelTypes parentType) {
-		
-		var hasCrossRefs = false
-		if (obj.eCrossReferences.size() > 0)
-			hasCrossRefs = true
-			
+	def List<SModelElement> translateAstToDiagram(
+		EObject obj, Context context, SModelElement parent, EMetaModelTypes parentType
+	) {
 		// ---------- Find the binding ----------
 		// Look up the binding.
 		var binding = this.findBinding(obj, parentType)
 	
 		// Look up the child elements.
 		val children = obj.eContents
-		val diagramElements = new ArrayList<Tuple<SModelElement, EObject>>()
+		val diagramElements = new ArrayList<SModelElement>()
 		
 		// Test if representation is desired.
 		if (binding === null) {			
 			// Recursively finds representations for child elements.
 			for (child : children) {
-				diagramElements.addAll(translateAstToDiagram(child, context, parent, parentType))
+				diagramElements.addAll(
+					translateAstToDiagram(
+						child, context, parent, parentType
+					)
+				)
 			}
 			return diagramElements
 		}
@@ -120,19 +121,21 @@ class DiagramGenerator implements IDiagramGenerator {
 			 * 		--> Tracing methods ("TraceProvider") 
 			 */
 			val edge = new ConnectionElement("", binding.type.toString(), obj, context, parent, null, this)
-			diagramElements.add(new Tuple(edge, obj))
+			diagramElements.add(edge)
 		} else {
 			if (label instanceof String) {				
 				
 				if (binding.isStructural()) {
 					node = new StructuralElement(label, modifiable, binding.type.toString(), context, obj, this)
-					diagramElements.add(new Tuple(node, obj))
+					diagramElements.add(node)
 					
-					if (hasCrossRefs) {
-						for (crossRef : obj.eCrossReferences) {
-							this.crossReferences.add(new Tuple(node, obj))
-						}
+					val tuple = new Tuple(node as SModelElement, obj)
+					val reference = this.crossReferences.wasCrossReferenced(tuple)
+					if (reference !== null) {							
+						val refEdge = new ConnectionElement("", EMetaModelTypes.ARGUMENTATIVE_RELATIONSHIP.toString(), obj, context, node, reference, this)
+						diagramElements.add(refEdge)
 					}
+					this.crossReferences.add(tuple)
 					
 					// If parent was no connection itself, add a connection to this structural child element.
 					if (parentType.isStructural()) {
@@ -141,7 +144,7 @@ class DiagramGenerator implements IDiagramGenerator {
 
 						if (connectionBinding !== null) {
 							val edge = new ConnectionElement("", connectionBinding.type.toString(), obj, context, parent, node, this)
-							diagramElements.add(new Tuple(edge, obj))
+							diagramElements.add(edge)
 						}
 					} else {
 						// If parent was a connection, set it's target to the new structural element.
@@ -158,18 +161,24 @@ class DiagramGenerator implements IDiagramGenerator {
 			} else {
 				if (label !== null) {
 					if (label instanceof EObject) {
-						diagramElements.addAll(translateAstToDiagram(label, context, parent, parentType))
+						diagramElements.addAll(
+							translateAstToDiagram(
+								label, context, parent, parentType
+							)
+						)
 					}
 				}
 			}
 		}
-		// ---------- Apply Method for all children ----------
 		
 		for (child : children) {
 			// The current object becomes the parent object.
-			diagramElements.addAll(translateAstToDiagram(child, context, node, binding.type))
+			diagramElements.addAll(
+				translateAstToDiagram(
+					child, context, node, binding.type
+				)
+			)
 		}
-		
 		return diagramElements 
 		
 	}
@@ -275,20 +284,15 @@ class DiagramGenerator implements IDiagramGenerator {
 		sElement.trace(element).addIssueMarkers(element, context) 
 	} 
 	
-	def resolveCrossReferences(List<Tuple<SModelElement, EObject>> astObjects, List<Tuple<SModelElement, EObject>> crossReferences, Context context
+	def SModelElement wasCrossReferenced(
+		List<Tuple<SModelElement, EObject>> objects, Tuple<SModelElement, EObject> curr
 	) {
-		
-		val additionalEdges = new ArrayList<SModelElement>()
-		for (reference : crossReferences) {
-			for (obj : astObjects) {
-				
-				if ((reference.second).equals(obj.second)) {
-					additionalEdges.add(new ConnectionElement("", EMetaModelTypes.DERIVATIVE_RELATIONSHIP.toString,
-						null, context, reference.first, obj.first, this))
-				}
-					
-			}			
+		for (obj : objects) {
+			if (obj.second.equals(curr.second)) {
+				return obj.first
+			}
 		}
+		return null		
 	}
 	
 	/**

@@ -51,7 +51,9 @@ class BindingsSetup {
 			new Binding(EMetaModelTypes.OPTION_RELATIONSHIP, EMetaModelTypes.DECISION_PROBLEM, EMetaModelTypes.DECISION_OPTION),
 			new Binding(EMetaModelTypes.ARGUMENTATIVE_RELATIONSHIP, EMetaModelTypes.STATEMENT, EMetaModelTypes.STATEMENT),
 			new Binding(EMetaModelTypes.CONSEQUENCE_RELATIONSHIP, EMetaModelTypes.STATEMENT, EMetaModelTypes.DECISION_RESULT),
-			new Binding(EMetaModelTypes.CONSEQUENCE_RELATIONSHIP, EMetaModelTypes.STATEMENT, EMetaModelTypes.DROBJECT)			
+			new Binding(EMetaModelTypes.CONSEQUENCE_RELATIONSHIP, EMetaModelTypes.STATEMENT, EMetaModelTypes.DROBJECT),
+			new Binding(EMetaModelTypes.DERIVATIVE_RELATIONSHIP, EMetaModelTypes.DECISION_OPTION, EMetaModelTypes.DECISION_RESULT)			
+			
 			
 		)
 		
